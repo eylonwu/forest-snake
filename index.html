@@ -47,38 +47,45 @@
 
     .hud {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
     }
 
     .hud-item {
       display: flex;
       flex-direction: column;
-      gap: 3px;
-      padding: 9px 14px;
-      border-radius: 14px;
+      gap: 2px;
+      padding: 8px 11px;
+      border-radius: 13px;
       background: linear-gradient(180deg, rgba(34, 44, 30, 0.92), rgba(18, 25, 17, 0.94));
       border: 1px solid rgba(214, 198, 160, 0.14);
       box-shadow: inset 0 1px 0 rgba(240, 232, 200, 0.07);
+      min-width: 0;
     }
 
     .hud-item .label {
-      font-size: 11px;
-      letter-spacing: 0.16em;
+      font-size: 10px;
+      letter-spacing: 0.1em;
       color: rgba(196, 196, 164, 0.62);
+      white-space: nowrap;
     }
 
     .hud-item .value {
       font-family: var(--serif);
-      font-size: 22px;
+      font-size: 19px;
       font-weight: 700;
       line-height: 1.1;
       font-variant-numeric: tabular-nums;
       color: var(--amber);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .hud-item .value.best { color: var(--moss); }
-    .hud-item .value.level { color: var(--cream); }
+    .hud-item .value.goal { color: var(--moss); }
+    .hud-item .value.star { color: #f2d68b; }
+    .hud-item .value.coin { color: #e6c983; }
+    .hud-item .value.lv { color: var(--cream); }
 
     .board-wrap {
       position: relative;
@@ -116,121 +123,253 @@
     .overlay {
       position: absolute;
       inset: 0;
-      z-index: 2;
+      z-index: 3;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 24px;
-      text-align: center;
-      pointer-events: none;
-      background: radial-gradient(circle at 50% 44%, rgba(10, 17, 10, 0.82), rgba(4, 7, 4, 0.96));
-      -webkit-backdrop-filter: blur(6px);
-      backdrop-filter: blur(6px);
-      transition: opacity 0.25s ease, visibility 0.25s ease;
+      padding: 18px;
+      background: radial-gradient(circle at 50% 40%, rgba(10, 17, 10, 0.9), rgba(4, 7, 4, 0.97));
+      -webkit-backdrop-filter: blur(7px);
+      backdrop-filter: blur(7px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      transition: opacity 0.22s ease, visibility 0.22s ease;
     }
 
     .overlay.hidden {
       opacity: 0;
       visibility: hidden;
+      pointer-events: none;
     }
 
-    .overlay .kicker {
-      font-size: 10px;
+    .ov-inner {
+      width: 100%;
+      max-width: 400px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+      padding: 6px 0;
+    }
+
+    .ov-inner .kicker {
+      font-size: 9.5px;
       letter-spacing: 0.34em;
       color: rgba(214, 198, 160, 0.55);
       text-transform: uppercase;
     }
 
-    .overlay h1 {
-      margin: 2px 0 6px;
+    .ov-inner h1 {
+      margin: 0 0 4px;
       font-family: var(--serif);
-      font-size: clamp(26px, 6.4vw, 38px);
-      letter-spacing: 0.08em;
+      font-size: clamp(22px, 5.6vw, 32px);
+      letter-spacing: 0.07em;
       background: linear-gradient(180deg, #f7efd9 12%, #d9a45b 96%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.55));
     }
 
-    .overlay p {
+    .ov-inner p {
       margin: 0;
-      max-width: 34ch;
-      font-size: 13.5px;
-      line-height: 1.75;
+      max-width: 36ch;
+      font-size: 13px;
+      line-height: 1.72;
       color: rgba(190, 196, 168, 0.78);
     }
 
-    .overlay .tip {
-      margin-top: 10px;
-      font-size: 12px;
-      letter-spacing: 0.18em;
-      color: var(--amber);
-      animation: breathe 2.6s ease-in-out infinite;
+    .ov-stats {
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      margin: 6px 0 2px;
     }
 
-    @keyframes breathe {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 0.92; }
+    .ov-stat { display: flex; flex-direction: column; gap: 1px; }
+    .ov-stat .k { font-size: 10px; letter-spacing: 0.12em; color: rgba(190, 196, 168, 0.6); }
+    .ov-stat .v { font-family: var(--serif); font-size: 19px; color: var(--amber); }
+
+    .big-stars {
+      font-size: 26px;
+      letter-spacing: 6px;
+      color: rgba(150, 150, 120, 0.35);
+      margin: 2px 0;
     }
+    .big-stars .on { color: #f4d78c; text-shadow: 0 0 18px rgba(244, 215, 140, 0.5); }
+
+    .btn-primary {
+      margin-top: 8px;
+      padding: 12px 34px;
+      border: 0;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 15.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #1b1409;
+      background: linear-gradient(180deg, #f2d79a, #d9a45b);
+      box-shadow: 0 12px 28px -12px rgba(233, 190, 110, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+      transition: transform 0.14s ease, filter 0.14s ease;
+    }
+    .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.05); }
+    .btn-primary:active { transform: translateY(1px) scale(0.99); }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+    .btn-ghost {
+      padding: 10px 20px;
+      border: 1px solid rgba(214, 198, 160, 0.24);
+      border-radius: 999px;
+      background: rgba(28, 36, 24, 0.7);
+      color: #ded4b8;
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    .btn-ghost:hover { background: rgba(56, 70, 42, 0.85); border-color: rgba(230, 214, 170, 0.42); }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 7px;
+      width: 100%;
+      margin: 8px 0 2px;
+    }
+
+    .lv {
+      position: relative;
+      padding: 9px 4px 7px;
+      border-radius: 11px;
+      border: 1px solid rgba(214, 198, 160, 0.18);
+      background: rgba(30, 40, 26, 0.75);
+      color: #e6dcc2;
+      cursor: pointer;
+      font-family: var(--serif);
+      font-size: 15px;
+      line-height: 1.1;
+      transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+    }
+    .lv:hover:not(:disabled) { transform: translateY(-1px); border-color: rgba(233, 190, 110, 0.55); background: rgba(48, 62, 38, 0.85); }
+    .lv .st { display: block; font-size: 9px; letter-spacing: 1px; color: #f0cd7f; margin-top: 2px; min-height: 11px; }
+    .lv:disabled { opacity: 0.38; cursor: not-allowed; }
+    .lv.done { border-color: rgba(233, 190, 110, 0.5); }
+
+    .panel {
+      width: 100%;
+      margin-top: 6px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(22, 30, 20, 0.7);
+      border: 1px solid rgba(214, 198, 160, 0.12);
+      text-align: left;
+    }
+    .panel h2 {
+      margin: 0 0 7px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      color: rgba(214, 198, 160, 0.65);
+    }
+
+    .mission {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #cfc7ae;
+      padding: 4px 0;
+    }
+    .mission .mname { flex: 1; }
+    .mission .mbar {
+      width: 62px;
+      height: 4px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+    .mission .mbar i { display: block; height: 100%; background: linear-gradient(90deg, #9fc07a, #e8c987); }
+    .mission.done { color: #a9c98c; }
+    .mission .mreward { font-size: 11px; color: #e6c983; min-width: 34px; text-align: right; }
+
+    .shop { display: flex; gap: 7px; flex-wrap: wrap; }
+    .skin {
+      flex: 1 1 30%;
+      min-width: 92px;
+      padding: 8px 6px;
+      border-radius: 10px;
+      border: 1px solid rgba(214, 198, 160, 0.2);
+      background: rgba(30, 40, 26, 0.8);
+      color: #e2d8be;
+      font-size: 11.5px;
+      cursor: pointer;
+      line-height: 1.35;
+    }
+    .skin .price { display: block; font-size: 10px; color: #e6c983; margin-top: 2px; }
+    .skin.active { border-color: rgba(233, 190, 110, 0.75); box-shadow: inset 0 0 0 1px rgba(233, 190, 110, 0.3); }
+    .skin:disabled { opacity: 0.45; cursor: not-allowed; }
 
     .hold-hint {
       position: absolute;
-      top: 12px;
+      top: 10px;
       left: 50%;
-      z-index: 3;
-      padding: 6px 16px;
+      z-index: 2;
+      padding: 5px 15px;
       border-radius: 999px;
-      font-size: 12px;
-      letter-spacing: 0.1em;
+      font-size: 11.5px;
+      letter-spacing: 0.08em;
       color: #e9dfc0;
       white-space: nowrap;
       pointer-events: none;
       background: rgba(12, 18, 10, 0.82);
       border: 1px solid rgba(220, 200, 150, 0.28);
-      -webkit-backdrop-filter: blur(4px);
-      backdrop-filter: blur(4px);
       opacity: 0;
       transform: translate(-50%, -6px);
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
+    .hold-hint.show { opacity: 1; transform: translate(-50%, 0); }
 
-    .hold-hint.show {
-      opacity: 1;
-      transform: translate(-50%, 0);
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 14px;
+      z-index: 5;
+      transform: translate(-50%, 12px);
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: #1d1608;
+      background: linear-gradient(180deg, #f2d79a, #dcae66);
+      box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.8);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.24s ease, transform 0.24s ease;
+      white-space: nowrap;
     }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    .bar {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
+    .bar { display: flex; justify-content: center; gap: 9px; flex-wrap: wrap; }
 
     .ghost {
-      padding: 8px 18px;
+      padding: 8px 16px;
       border: 1px solid rgba(214, 198, 160, 0.22);
       border-radius: 999px;
       background: rgba(28, 36, 24, 0.62);
       color: #d8cfb6;
-      font-size: 13px;
-      letter-spacing: 0.06em;
+      font-size: 12.5px;
+      letter-spacing: 0.05em;
       cursor: pointer;
       transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
-
-    .ghost:hover {
-      background: rgba(56, 70, 42, 0.8);
-      border-color: rgba(230, 214, 170, 0.42);
-      color: #f3ecd6;
-    }
+    .ghost:hover { background: rgba(56, 70, 42, 0.8); border-color: rgba(230, 214, 170, 0.42); color: #f3ecd6; }
 
     .hint {
       margin: 0;
       text-align: center;
-      font-size: 12px;
-      letter-spacing: 0.08em;
+      font-size: 11.5px;
+      letter-spacing: 0.06em;
       color: rgba(160, 172, 142, 0.72);
     }
   </style>
@@ -239,37 +378,38 @@
   <main class="app">
     <header class="hud">
       <div class="hud-item">
-        <span class="label">得分</span>
-        <span class="value" id="score">0</span>
+        <span class="label">关卡</span>
+        <span class="value lv" id="hud-level">01</span>
       </div>
       <div class="hud-item">
-        <span class="label">最高分</span>
-        <span class="value best" id="best">0</span>
+        <span class="label">目标</span>
+        <span class="value goal" id="hud-goal">0/5</span>
       </div>
       <div class="hud-item">
-        <span class="label">等级</span>
-        <span class="value level" id="level">1</span>
+        <span class="label">星星</span>
+        <span class="value star" id="hud-stars">0</span>
+      </div>
+      <div class="hud-item">
+        <span class="label">金币</span>
+        <span class="value coin" id="hud-coins">0</span>
       </div>
     </header>
 
     <section class="board-wrap">
       <canvas id="game" width="420" height="420" aria-label="草丛中的蛇"></canvas>
-      <div class="overlay" id="overlay">
-        <span class="kicker">snake in the grass</span>
-        <h1 id="ov-title">林间蛇影</h1>
-        <p id="ov-desc">按住鼠标拖动控制方向，松开立即暂停。<br />吃掉草丛里的蛇蛋，别撞墙，也别咬到自己。</p>
-        <p class="tip" id="ov-tip">按住画面开始游戏</p>
-      </div>
       <div class="hold-hint" id="hold-hint">已松开，按住拖动继续</div>
+      <div class="overlay" id="overlay"></div>
+      <div class="toast" id="toast"></div>
       <div class="glass"></div>
     </section>
 
     <div class="bar">
-      <button class="ghost" id="restart-btn" type="button">重新开始</button>
+      <button class="ghost" id="restart-btn" type="button">重玩本关</button>
+      <button class="ghost" id="select-btn" type="button">选关</button>
       <button class="ghost" id="sound-btn" type="button">音效 开</button>
     </div>
 
-    <p class="hint">按住鼠标 / 屏幕滑动转向 · 松开暂停 · R 重开</p>
+    <p class="hint">按住画面并移动鼠标转向 · 松开暂停 · R 重开 · Esc 选关</p>
   </main>
 
   <script>
@@ -278,68 +418,166 @@
 
       const COLS = 21;
       const ROWS = 21;
-      const BASE_STEP = 150;
-      const MIN_STEP = 70;
-      const BEST_KEY = 'forest-snake-best';
-      const DRAG_THRESHOLD = 20;
+      const SAVE_KEY = 'forest-snake-save-v3';
+      const TAU = Math.PI * 2;
+
+      const LEVELS = [
+        { target: 5,  step: 170, rocks: 0 },
+        { target: 6,  step: 164, rocks: 0 },
+        { target: 7,  step: 159, rocks: 4 },
+        { target: 8,  step: 154, rocks: 6 },
+        { target: 9,  step: 149, rocks: 8 },
+        { target: 10, step: 145, rocks: 10 },
+        { target: 11, step: 141, rocks: 12 },
+        { target: 12, step: 137, rocks: 14 },
+        { target: 13, step: 134, rocks: 16 },
+        { target: 14, step: 131, rocks: 18 },
+        { target: 15, step: 128, rocks: 20 },
+        { target: 18, step: 125, rocks: 22 },
+      ];
+
+      const SKINS = [
+        { id: 'forest', name: '林间琥珀', cost: 0,   hi: [230, 180, 120], lo: [92, 52, 26],  head: ['#d39a60', '#b97a43', '#855231'], eye: '#f7d992', gem: '#c98a4a' },
+        { id: 'jade',   name: '青竹翡翠', cost: 80,  hi: [166, 220, 150], lo: [30, 78, 48],  head: ['#9ed08a', '#6ba05c', '#3d6b38'], eye: '#f2e9a0', gem: '#78b06a' },
+        { id: 'coral',  name: '赤练朱砂', cost: 180, hi: [232, 132, 104], lo: [66, 26, 22],  head: ['#d5795f', '#a8503c', '#6f2f24'], eye: '#ffd9a0', gem: '#c96a52' },
+      ];
+
+      const MISSION_DEFS = [
+        { id: 'eggs', label: '吃掉 12 颗蛇蛋', target: 12, reward: 6 },
+        { id: 'clears', label: '通关 1 个关卡', target: 1, reward: 8 },
+        { id: 'stars', label: '累计获得 6 颗星', target: 6, reward: 10 },
+      ];
 
       const canvas = document.getElementById('game');
       const ctx = canvas.getContext('2d');
 
-      const els = {
-        score: document.getElementById('score'),
-        best: document.getElementById('best'),
-        level: document.getElementById('level'),
+      const el = {
+        level: document.getElementById('hud-level'),
+        goal: document.getElementById('hud-goal'),
+        stars: document.getElementById('hud-stars'),
+        coins: document.getElementById('hud-coins'),
         overlay: document.getElementById('overlay'),
-        ovTitle: document.getElementById('ov-title'),
-        ovDesc: document.getElementById('ov-desc'),
-        ovTip: document.getElementById('ov-tip'),
         holdHint: document.getElementById('hold-hint'),
+        toast: document.getElementById('toast'),
         restartBtn: document.getElementById('restart-btn'),
+        selectBtn: document.getElementById('select-btn'),
         soundBtn: document.getElementById('sound-btn'),
       };
 
-      let best = 0;
-      try {
-        best = Number(localStorage.getItem(BEST_KEY)) || 0;
-      } catch (_) { /* 隐私模式下 localStorage 可能不可用 */ }
-      els.best.textContent = best;
+      /* ---------------- 存档与留存模型 ---------------- */
 
-      let size = 0;
-      let cell = 0;
-      let dpr = 1;
-      let soundOn = true;
-      let anchor = { x: 0, y: 0 };
-      let activePointerId = null;
+      function todayKey(offset = 0) {
+        const d = new Date();
+        d.setDate(d.getDate() + offset);
+        return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+      }
 
-      const boardCache = document.createElement('canvas');
+      function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
-      const G = {
-        status: 'idle',        // idle | running | over | win
-        holding: false,
-        snake: [],
-        dir: { x: 1, y: 0 },
-        queue: [],
-        food: { x: 0, y: 0, spots: [] },
-        score: 0,
-        stepMs: BASE_STEP,
-        acc: 0,
-        particles: [],
-        deathFlash: 0,
-      };
+      function loadSave() {
+        const base = {
+          unlocked: 1,
+          stars: {},
+          coins: 0,
+          skin: 'forest',
+          owned: ['forest'],
+          skill: 0.35,
+          streak: 0,
+          lastDay: '',
+          eggs: 0,
+          clears: 0,
+          runs: 0,
+          daily: null,
+        };
+        try {
+          const raw = localStorage.getItem(SAVE_KEY);
+          if (!raw) return base;
+          const p = JSON.parse(raw);
+          const merged = Object.assign(base, p || {});
+          merged.stars = (p && p.stars) || {};
+          merged.owned = (p && p.owned) || ['forest'];
+          return merged;
+        } catch (_) {
+          return base;
+        }
+      }
+
+      const RET = loadSave();
+
+      function persist() {
+        try { localStorage.setItem(SAVE_KEY, JSON.stringify(RET)); } catch (_) {}
+      }
+
+      // 连续登录：昨天玩过则 +1，中断重置
+      function refreshStreak() {
+        const k = todayKey();
+        if (RET.lastDay === k) return;
+        RET.streak = RET.lastDay === todayKey(-1) ? Math.min(30, (RET.streak || 0) + 1) : 1;
+        RET.lastDay = k;
+      }
+
+      function streakMultiplier() {
+        return 1 + Math.min(RET.streak || 1, 7) * 0.1;
+      }
+
+      function refreshDaily() {
+        const k = todayKey();
+        if (!RET.daily || RET.daily.day !== k) {
+          RET.daily = { day: k, progress: { eggs: 0, clears: 0, stars: 0 }, claimed: {} };
+        }
+      }
+
+      function missionState(def) {
+        const p = (RET.daily && RET.daily.progress[def.id]) || 0;
+        return { progress: Math.min(p, def.target), done: !!(RET.daily && RET.daily.claimed[def.id]) };
+      }
+
+      function addMissionProgress(id, amount) {
+        if (!RET.daily) return;
+        if (RET.daily.claimed[id]) return;
+        RET.daily.progress[id] = (RET.daily.progress[id] || 0) + amount;
+        const def = MISSION_DEFS.find((m) => m.id === id);
+        if (def && RET.daily.progress[id] >= def.target) {
+          RET.daily.claimed[id] = true;
+          const gain = Math.round(def.reward * streakMultiplier());
+          RET.coins += gain;
+          toast('每日任务完成 · +' + gain + ' 金币');
+          tone(760, 0.12, 'triangle', 0.09);
+          tone(1040, 0.16, 'sine', 0.07, 0.09);
+        }
+        persist();
+      }
+
+      function totalStars() {
+        let n = 0;
+        for (const k in RET.stars) n += RET.stars[k] || 0;
+        return n;
+      }
+
+      // 动态难度：表现好微加速，连续失误微减速，保持“心流”
+      function speedFactor() {
+        return clamp(1.06 - (RET.skill || 0.35) * 0.12, 0.92, 1.08);
+      }
+
+      function currentSkin() {
+        return SKINS.find((s) => s.id === RET.skin) || SKINS[0];
+      }
+
+      refreshStreak();
+      refreshDaily();
+      persist();
 
       /* ---------------- 音效 ---------------- */
 
       let audio = null;
+      let soundOn = true;
 
       function ensureAudio() {
         if (audio) return audio;
         try {
           const AC = window.AudioContext || window.webkitAudioContext;
           if (AC) audio = new AC();
-        } catch (_) {
-          audio = null;
-        }
+        } catch (_) { audio = null; }
         return audio;
       }
 
@@ -362,17 +600,28 @@
       }
 
       function sndEat() {
-        const base = 560 + Math.random() * 120;
-        tone(base, 0.09, 'triangle', 0.09);
-        tone(base * 1.5, 0.13, 'sine', 0.05, 0.035);
+        const b = 560 + Math.random() * 120;
+        tone(b, 0.09, 'triangle', 0.09);
+        tone(b * 1.5, 0.13, 'sine', 0.05, 0.035);
       }
-
       function sndDie() {
         tone(170, 0.34, 'sawtooth', 0.11);
         tone(96, 0.5, 'triangle', 0.09, 0.1);
       }
+      function sndWin() {
+        tone(700, 0.14, 'triangle', 0.09);
+        tone(880, 0.16, 'triangle', 0.09, 0.11);
+        tone(1170, 0.24, 'sine', 0.08, 0.23);
+      }
 
-      /* ---------------- 尺寸与场景缓存 ---------------- */
+      /* ---------------- 画布 / 场景缓存 ---------------- */
+
+      let size = 0;
+      let cell = 0;
+      let dpr = 1;
+
+      const boardCache = document.createElement('canvas');
+      const rockCache = document.createElement('canvas');
 
       function resizeCanvas() {
         const wrap = canvas.parentElement;
@@ -385,6 +634,7 @@
         canvas.height = Math.round(size * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         buildScenery();
+        buildRocks();
       }
 
       function mulberry32(a) {
@@ -414,7 +664,6 @@
 
         const rand = mulberry32(0x51a7e2b);
 
-        // 苔藓光斑
         for (let i = 0; i < 7; i++) {
           const x = rand() * size;
           const y = rand() * size;
@@ -424,11 +673,10 @@
           g.addColorStop(1, 'rgba(120, 160, 90, 0)');
           b.fillStyle = g;
           b.beginPath();
-          b.arc(x, y, rad, 0, Math.PI * 2);
+          b.arc(x, y, rad, 0, TAU);
           b.fill();
         }
 
-        // 草叶
         const blades = Math.round(size * 1.9);
         for (let i = 0; i < blades; i++) {
           const x = rand() * size;
@@ -452,7 +700,6 @@
           b.stroke();
         }
 
-        // 落叶与草籽
         for (let i = 0; i < 64; i++) {
           const x = rand() * size;
           const y = rand() * size;
@@ -461,11 +708,10 @@
           const a = rand() * Math.PI;
           b.fillStyle = 'hsla(' + (58 + rand() * 42) + ', ' + (28 + rand() * 22) + '%, ' + (18 + rand() * 16) + '%, ' + (0.22 + rand() * 0.3) + ')';
           b.beginPath();
-          b.ellipse(x, y, w, h, a, 0, Math.PI * 2);
+          b.ellipse(x, y, w, h, a, 0, TAU);
           b.fill();
         }
 
-        // 小碎石
         const stones = 8 + Math.floor(rand() * 5);
         for (let i = 0; i < stones; i++) {
           const x = rand() * size;
@@ -475,21 +721,20 @@
 
           b.fillStyle = 'rgba(0, 0, 0, 0.2)';
           b.beginPath();
-          b.ellipse(x + r * 0.45, y + r * 0.5, r * 1.2, r * 0.8, rot, 0, Math.PI * 2);
+          b.ellipse(x + r * 0.45, y + r * 0.5, r * 1.2, r * 0.8, rot, 0, TAU);
           b.fill();
 
           b.fillStyle = 'rgba(104, 110, 94, 0.55)';
           b.beginPath();
-          b.ellipse(x, y, r * 1.15, r * 0.8, rot, 0, Math.PI * 2);
+          b.ellipse(x, y, r * 1.15, r * 0.8, rot, 0, TAU);
           b.fill();
 
           b.fillStyle = 'rgba(156, 162, 138, 0.38)';
           b.beginPath();
-          b.ellipse(x - r * 0.25, y - r * 0.24, r * 0.45, r * 0.28, rot, 0, Math.PI * 2);
+          b.ellipse(x - r * 0.25, y - r * 0.24, r * 0.45, r * 0.28, rot, 0, TAU);
           b.fill();
         }
 
-        // 极淡网格，帮助判断格子
         b.strokeStyle = 'rgba(230, 235, 200, 0.035)';
         b.lineWidth = 1;
         b.beginPath();
@@ -505,14 +750,12 @@
         }
         b.stroke();
 
-        // 暗角
         const vig = b.createRadialGradient(size * 0.5, size * 0.48, size * 0.28, size * 0.5, size * 0.48, size * 0.78);
         vig.addColorStop(0, 'rgba(0, 0, 0, 0)');
         vig.addColorStop(1, 'rgba(0, 0, 0, 0.5)');
         b.fillStyle = vig;
         b.fillRect(0, 0, size, size);
 
-        // 顶部暖光
         const sun = b.createRadialGradient(size * 0.24, -size * 0.05, 0, size * 0.24, -size * 0.05, size * 0.85);
         sun.addColorStop(0, 'rgba(255, 236, 170, 0.13)');
         sun.addColorStop(0.45, 'rgba(255, 236, 170, 0.04)');
@@ -521,9 +764,190 @@
         b.fillRect(0, 0, size, size);
       }
 
+      function rockShape(c, pts) {
+        c.beginPath();
+        c.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length; i++) {
+          const p = pts[i];
+          const prev = pts[i - 1];
+          const mx = (prev.x + p.x) / 2;
+          const my = (prev.y + p.y) / 2;
+          c.quadraticCurveTo(prev.x, prev.y, mx, my);
+        }
+        c.closePath();
+      }
+
+      function rockPoints(gx, gy, r) {
+        const rand = mulberry32(gx * 92821 + gy * 68917 + 13);
+        const n = 7;
+        const pts = [];
+        for (let i = 0; i < n; i++) {
+          const a = (i / n) * TAU;
+          const rad = r * (0.74 + rand() * 0.3);
+          pts.push({ x: Math.cos(a) * rad, y: Math.sin(a) * rad * 0.84 });
+        }
+        return pts;
+      }
+
+      function buildRocks() {
+        const px = Math.max(1, Math.round(size * dpr));
+        rockCache.width = px;
+        rockCache.height = px;
+        const b = rockCache.getContext('2d');
+        b.setTransform(dpr, 0, 0, dpr, 0, 0);
+        b.clearRect(0, 0, size, size);
+        if (!G.rocks || !G.rocks.size) return;
+
+        G.rocks.forEach((key) => {
+          const parts = key.split(',');
+          const gx = Number(parts[0]);
+          const gy = Number(parts[1]);
+          const cx = (gx + 0.5) * cell;
+          const cy = (gy + 0.5) * cell;
+          const r = cell * 0.47;
+          const seed = (gx * 73 + gy * 149) % 100;
+          const rot = (seed / 100) * 0.7 - 0.35;
+
+          // 落影
+          b.fillStyle = 'rgba(0, 0, 0, 0.42)';
+          b.beginPath();
+          b.ellipse(cx + cell * 0.08, cy + cell * 0.14, r * 0.95, r * 0.56, 0, 0, TAU);
+          b.fill();
+
+          b.save();
+          b.translate(cx, cy);
+          b.rotate(rot);
+
+          const pts = rockPoints(gx, gy, r);
+
+          const g = b.createRadialGradient(-r * 0.36, -r * 0.42, r * 0.08, 0, 0, r * 1.15);
+          g.addColorStop(0, '#6f7666');
+          g.addColorStop(0.5, '#474e3f');
+          g.addColorStop(1, '#1e231b');
+          b.fillStyle = g;
+          rockShape(b, pts);
+          b.fill();
+
+          b.strokeStyle = 'rgba(12, 16, 11, 0.75)';
+          b.lineWidth = 1.1;
+          b.stroke();
+
+          // 顶面受光
+          b.save();
+          b.translate(-r * 0.12, -r * 0.16);
+          b.scale(0.6, 0.55);
+          b.fillStyle = 'rgba(176, 182, 156, 0.14)';
+          rockShape(b, pts);
+          b.fill();
+          b.restore();
+
+          // 石面颗粒
+          const rp = mulberry32(gx * 31 + gy * 17 + 5);
+          for (let i = 0; i < 5; i++) {
+            const a = rp() * TAU;
+            const d = rp() * r * 0.55;
+            b.fillStyle = 'rgba(20, 24, 17, ' + (0.18 + rp() * 0.22) + ')';
+            b.beginPath();
+            b.ellipse(Math.cos(a) * d, Math.sin(a) * d * 0.8, r * (0.05 + rp() * 0.09), r * (0.04 + rp() * 0.06), a, 0, TAU);
+            b.fill();
+          }
+
+          // 苔藓
+          for (let i = 0; i < 3; i++) {
+            const a = rp() * TAU;
+            const d = rp() * r * 0.5;
+            b.fillStyle = 'rgba(108, 146, 78, ' + (0.24 + rp() * 0.26) + ')';
+            b.beginPath();
+            b.ellipse(Math.cos(a) * d, Math.sin(a) * d * 0.7 - r * 0.28, r * (0.16 + rp() * 0.16), r * (0.07 + rp() * 0.06), 0, 0, TAU);
+            b.fill();
+          }
+
+          b.restore();
+        });
+      }
+
       /* ---------------- 游戏状态 ---------------- */
 
-      function reset() {
+      const G = {
+        status: 'idle',       // idle | running | over | clear
+        holding: false,
+        level: 1,
+        levelCfg: LEVELS[0],
+        snake: [],
+        dir: { x: 1, y: 0 },
+        queue: [],
+        pred: null,
+        rocks: new Set(),
+        food: { x: 0, y: 0, spots: [] },
+        eggs: 0,
+        target: LEVELS[0].target,
+        stepMs: LEVELS[0].step,
+        acc: 0,
+        levelStart: 0,
+        elapsed: 0,
+        particles: [],
+        deathFlash: 0,
+        nearMiss: 0,
+        steerAxis: null,
+        combo: { count: 0, timer: 0 },
+      };
+
+      const pointer = { x: 0, y: 0, has: false };
+      let activePointerId = null;
+
+      function resizePointer(e) {
+        const r = canvas.getBoundingClientRect();
+        if (!r.width) return;
+        pointer.x = (e.clientX - r.left) * (size / r.width);
+        pointer.y = (e.clientY - r.top) * (size / r.height);
+        pointer.has = true;
+      }
+
+      /* ---------------- 关卡 ---------------- */
+
+      function buildRockSet(level) {
+        const cfg = LEVELS[level - 1];
+        const rand = mulberry32(0x9e37 + level * 7919);
+        const set = new Set();
+        let guard = 0;
+        const midY = Math.floor(ROWS / 2);
+
+        while (set.size < cfg.rocks && guard++ < 900) {
+          const len = 1 + Math.floor(rand() * 3);
+          const horiz = rand() > 0.5;
+          const x0 = 2 + Math.floor(rand() * (COLS - 4));
+          const y0 = 2 + Math.floor(rand() * (ROWS - 4));
+          for (let i = 0; i < len; i++) {
+            const x = horiz ? x0 + i : x0;
+            const y = horiz ? y0 : y0 + i;
+            if (x < 1 || x >= COLS - 1 || y < 1 || y >= ROWS - 1) continue;
+            if (Math.abs(y - midY) <= 1 && x >= 4 && x <= 12) continue;
+            set.add(x + ',' + y);
+            if (set.size >= cfg.rocks) break;
+          }
+        }
+        return set;
+      }
+
+      function startLevel(n) {
+        const level = clamp(n, 1, LEVELS.length);
+        const cfg = LEVELS[level - 1];
+        G.level = level;
+        G.levelCfg = cfg;
+        G.target = cfg.target;
+        G.eggs = 0;
+        G.rocks = buildRockSet(level);
+        G.stepMs = cfg.step * speedFactor();
+        G.acc = 0;
+        G.queue = [];
+        G.particles = [];
+        G.deathFlash = 0;
+        G.nearMiss = 0;
+        G.combo = { count: 0, timer: 0 };
+        G.steerAxis = null;
+        G.elapsed = 0;
+        G.levelStart = performance.now();
+
         const midY = Math.floor(ROWS / 2);
         G.snake = [
           { x: 8, y: midY },
@@ -531,61 +955,82 @@
           { x: 6, y: midY },
         ];
         G.dir = { x: 1, y: 0 };
-        G.queue = [];
-        G.score = 0;
-        G.stepMs = BASE_STEP;
-        G.acc = 0;
-        G.particles = [];
-        G.deathFlash = 0;
+
         placeFood();
+        G.pred = nextBody();
+        buildRocks();
         updateHud();
+
+        G.status = 'running';
+        G.holding = false;
+        hideOverlay();
+        showHoldHint();
+        ensureAudio();
+        persist();
       }
 
       function placeFood() {
         const free = [];
         for (let y = 0; y < ROWS; y++) {
           for (let x = 0; x < COLS; x++) {
-            if (!G.snake.some((s) => s.x === x && s.y === y)) free.push({ x, y });
+            if (G.rocks.has(x + ',' + y)) continue;
+            if (G.snake.some((s) => s.x === x && s.y === y)) continue;
+            free.push({ x, y });
           }
         }
-        if (free.length === 0) return false;
+        if (!free.length) return false;
 
         const f = free[Math.floor(Math.random() * free.length)];
         f.spots = [];
         const count = 4 + Math.floor(Math.random() * 3);
         for (let i = 0; i < count; i++) {
-          const a = Math.random() * Math.PI * 2;
+          const a = Math.random() * TAU;
           const r = Math.sqrt(Math.random()) * 0.66;
-          f.spots.push({
-            x: Math.cos(a) * r,
-            y: Math.sin(a) * r,
-            r: 0.06 + Math.random() * 0.08,
-          });
+          f.spots.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, r: 0.06 + Math.random() * 0.08 });
         }
         G.food = f;
         return true;
       }
 
       function updateHud() {
-        els.score.textContent = G.score;
-        els.level.textContent = Math.floor(G.score / 50) + 1;
-        if (G.score > best) {
-          best = G.score;
-          els.best.textContent = best;
-          try { localStorage.setItem(BEST_KEY, String(best)); } catch (_) {}
-        }
+        el.level.textContent = String(G.level).padStart(2, '0');
+        el.goal.textContent = G.eggs + '/' + G.target;
+        el.stars.textContent = totalStars();
+        el.coins.textContent = RET.coins;
       }
 
-      /* ---------------- 单步推进 ---------------- */
+      /* ---------------- 推进 ---------------- */
+
+      function nextBody() {
+        const head = G.snake[0];
+        if (!head) return null;
+        const nx = head.x + G.dir.x;
+        const ny = head.y + G.dir.y;
+        if (nx < 0 || nx >= COLS || ny < 0 || ny >= ROWS) return null;
+        if (G.rocks.has(nx + ',' + ny)) return null;
+
+        const grow = nx === G.food.x && ny === G.food.y;
+        const body = grow ? G.snake : G.snake.slice(0, -1);
+        if (body.some((s) => s.x === nx && s.y === ny)) return null;
+
+        const out = [{ x: nx, y: ny }];
+        const keep = grow ? G.snake.length : G.snake.length - 1;
+        for (let i = 0; i < keep; i++) out.push({ x: G.snake[i].x, y: G.snake[i].y });
+        return out;
+      }
 
       function step() {
-        if (G.queue.length) G.dir = G.queue.shift();
+        // 一步只消费一个方向，保持网格手感；渲染使用缓存的 pred，所以不会回跳
+        if (G.queue.length) {
+          const d = G.queue.shift();
+          if (!(d.x === -G.dir.x && d.y === -G.dir.y)) G.dir = d;
+        }
 
         const head = G.snake[0];
         const nx = head.x + G.dir.x;
         const ny = head.y + G.dir.y;
 
-        if (nx < 0 || nx >= COLS || ny < 0 || ny >= ROWS) {
+        if (nx < 0 || nx >= COLS || ny < 0 || ny >= ROWS || G.rocks.has(nx + ',' + ny)) {
           die();
           return;
         }
@@ -600,213 +1045,109 @@
         G.snake.unshift({ x: nx, y: ny });
 
         if (grow) {
-          G.score += 10;
-          const lv = Math.floor(G.score / 50) + 1;
-          G.stepMs = Math.max(MIN_STEP, BASE_STEP - (lv - 1) * 12);
+          G.eggs += 1;
+          const gain = Math.max(1, Math.round(1 * streakMultiplier()));
+          RET.coins += gain;
+          RET.eggs += 1;
+          addMissionProgress('eggs', 1);
+
+          // 连吃：短时间连续吃到蛋给予额外奖励，强化正反馈
+          G.combo.count += 1;
+          G.combo.timer = 1.6;
+          if (G.combo.count >= 3) RET.coins += 1;
+
           burst(nx, ny);
           sndEat();
           updateHud();
+
+          if (G.eggs >= G.target) {
+            clearLevel();
+            return;
+          }
           if (!placeFood()) {
-            win();
+            clearLevel();
             return;
           }
         } else {
           G.snake.pop();
         }
+
+        if (G.nearMiss < 0.35 && nearMissCheck()) G.nearMiss = 1;
+        G.pred = nextBody();
       }
 
-      // 提前推演下一步，用于渲染插值：让蛇看起来是连续爬行而不是逐格跳动
-      function predictSnake() {
-        if (!G.snake.length) return null;
-        const dir = G.queue.length ? G.queue[0] : G.dir;
+      function nearMissCheck() {
         const head = G.snake[0];
-        const nx = head.x + dir.x;
-        const ny = head.y + dir.y;
-        if (nx < 0 || nx >= COLS || ny < 0 || ny >= ROWS) return null;
-
-        const grow = nx === G.food.x && ny === G.food.y;
-        const body = grow ? G.snake : G.snake.slice(0, -1);
-        if (body.some((s) => s.x === nx && s.y === ny)) return null;
-
-        const next = [{ x: nx, y: ny }];
-        const keep = grow ? G.snake.length : G.snake.length - 1;
-        for (let i = 0; i < keep; i++) next.push({ x: G.snake[i].x, y: G.snake[i].y });
-        return next;
-      }
-
-      function bodyPoints() {
-        const pred = G.status === 'running' ? predictSnake() : null;
-        const progress = G.status === 'running' ? Math.min(1, G.acc / G.stepMs) : 0;
-        const n = pred ? pred.length : G.snake.length;
-        const pts = [];
-        for (let i = 0; i < n; i++) {
-          const to = pred ? pred[i] : G.snake[i];
-          const from = G.snake[i] || to;
-          pts.push({
-            x: (from.x + (to.x - from.x) * progress + 0.5) * cell,
-            y: (from.y + (to.y - from.y) * progress + 0.5) * cell,
-          });
+        let danger = false;
+        for (let dx = -1; dx <= 1; dx++) {
+          for (let dy = -1; dy <= 1; dy++) {
+            if (!dx && !dy) continue;
+            const x = head.x + dx;
+            const y = head.y + dy;
+            if (x < 0 || x >= COLS || y < 0 || y >= ROWS) continue;
+            if (G.rocks.has(x + ',' + y)) danger = true;
+          }
         }
-        return pts;
+        if (!danger) {
+          for (let i = 1; i < G.snake.length; i++) {
+            const s = G.snake[i];
+            if (Math.abs(s.x - head.x) + Math.abs(s.y - head.y) === 1) { danger = true; break; }
+          }
+        }
+        return danger;
       }
 
-      /* ---------------- 局面切换 ---------------- */
-
-      function beginGame() {
-        if (G.status === 'over' || G.status === 'win') reset();
-        G.status = 'running';
-        G.holding = true;
-        G.acc = 0;
-        hideOverlay();
-        hideHoldHint();
-        ensureAudio();
+      function calcStars(cfg, seconds) {
+        const par = cfg.target * 12 * (cfg.step / 1000);
+        if (seconds <= par) return 3;
+        if (seconds <= par * 1.65) return 2;
+        return 1;
       }
 
-      function toIdle() {
-        reset();
-        G.status = 'idle';
+      function clearLevel() {
+        G.status = 'clear';
         G.holding = false;
-        hideHoldHint();
-        showOverlay(
-          '林间蛇影',
-          '按住鼠标拖动控制方向，松开立即暂停。<br />吃掉草丛里的蛇蛋，别撞墙，也别咬到自己。',
-          '按住画面开始游戏'
-        );
-      }
+        const seconds = (performance.now() - G.levelStart) / 1000;
+        const stars = calcStars(G.levelCfg, seconds);
+        const bonus = Math.round((12 + stars * 6) * streakMultiplier());
 
-      function releaseHold() {
-        if (!G.holding) return;
-        G.holding = false;
-        if (G.status === 'running') showHoldHint();
+        RET.coins += bonus;
+        RET.clears += 1;
+        RET.stars[G.level] = Math.max(RET.stars[G.level] || 0, stars);
+        RET.unlocked = Math.max(RET.unlocked, Math.min(LEVELS.length, G.level + 1));
+        RET.skill = clamp((RET.skill || 0.35) + 0.05 + (stars - 1) * 0.01, 0.1, 1);
+
+        addMissionProgress('clears', 1);
+        addMissionProgress('stars', stars);
+
+        updateHud();
+        persist();
+        sndWin();
+        hideHoldHint();
+        renderClearOverlay(stars, seconds, bonus);
       }
 
       function die() {
         G.status = 'over';
         G.holding = false;
         G.deathFlash = 1;
-        hideHoldHint();
+        G.pred = null;
+        RET.skill = clamp((RET.skill || 0.35) - 0.05, 0.1, 1);
+        RET.runs += 1;
+        persist();
         sndDie();
-        showOverlay('蛇影消散', '本局得分 ' + G.score + ' · 最高分 ' + best, '按住画面再来一局');
-      }
-
-      function win() {
-        G.status = 'win';
-        G.holding = false;
         hideHoldHint();
-        tone(820, 0.18, 'triangle', 0.11);
-        tone(1120, 0.24, 'sine', 0.08, 0.12);
-        showOverlay('完美通关', '整片草地都被你占满了！得分 ' + G.score, '按住画面再来一局');
+        renderOverOverlay();
       }
 
-      function showOverlay(title, descHTML, tip) {
-        els.ovTitle.textContent = title;
-        els.ovDesc.innerHTML = descHTML;
-        els.ovTip.textContent = tip;
-        els.overlay.classList.remove('hidden');
-      }
-
-      function hideOverlay() {
-        els.overlay.classList.add('hidden');
-      }
-
-      function showHoldHint() {
-        els.holdHint.classList.add('show');
-      }
-
-      function hideHoldHint() {
-        els.holdHint.classList.remove('show');
-      }
-
-      /* ---------------- 转向 ---------------- */
-
-      function queueDir(dx, dy) {
-        if (G.status !== 'running') return;
-        const base = G.queue.length ? G.queue[G.queue.length - 1] : G.dir;
-        if (dx === base.x && dy === base.y) return;
-        if (dx === -base.x && dy === -base.y) return;
-        if (G.queue.length >= 2) return;
-        G.queue.push({ x: dx, y: dy });
-      }
-
-      /* ---------------- 指针控制：按住运行，拖动转向，松开停止 ---------------- */
-
-      canvas.addEventListener('pointerdown', (e) => {
-        if (e.pointerType === 'mouse' && e.button !== 0) return;
-        e.preventDefault();
-        activePointerId = e.pointerId;
-        anchor.x = e.clientX;
-        anchor.y = e.clientY;
-        try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
-
-        if (G.status === 'idle' || G.status === 'over' || G.status === 'win') {
-          beginGame();
-        } else {
-          G.holding = true;
-          hideHoldHint();
-        }
-      });
-
-      canvas.addEventListener('pointermove', (e) => {
-        if (!G.holding || G.status !== 'running') return;
-        if (activePointerId !== null && e.pointerId !== activePointerId) return;
-
-        const dx = e.clientX - anchor.x;
-        const dy = e.clientY - anchor.y;
-        if (Math.hypot(dx, dy) < DRAG_THRESHOLD) return;
-
-        if (Math.abs(dx) > Math.abs(dy)) queueDir(dx > 0 ? 1 : -1, 0);
-        else queueDir(0, dy > 0 ? 1 : -1);
-
-        anchor.x = e.clientX;
-        anchor.y = e.clientY;
-      });
-
-      canvas.addEventListener('pointerup', (e) => {
-        if (e.pointerType === 'mouse' && e.button !== 0) return;
-        if (activePointerId !== null && e.pointerId !== activePointerId) return;
-        activePointerId = null;
-        releaseHold();
-      });
-
-      canvas.addEventListener('pointercancel', () => {
-        activePointerId = null;
-        releaseHold();
-      });
-
-      canvas.addEventListener('lostpointercapture', () => {
-        releaseHold();
-      });
-
-      window.addEventListener('blur', releaseHold);
-
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden) releaseHold();
-      });
-
-      window.addEventListener('keydown', (e) => {
-        if (e.key.toLowerCase() === 'r') {
-          e.preventDefault();
-          toIdle();
-        }
-      });
-
-      /* ---------------- 按钮 ---------------- */
-
-      els.restartBtn.addEventListener('click', toIdle);
-
-      els.soundBtn.addEventListener('click', () => {
-        soundOn = !soundOn;
-        els.soundBtn.textContent = soundOn ? '音效 开' : '音效 关';
-        if (soundOn) tone(560, 0.08, 'triangle', 0.08);
-      });
-
-      /* ---------------- 粒子（蛋壳碎片） ---------------- */
+      /* ---------------- 粒子 ---------------- */
 
       function burst(cx, cy) {
         const px = (cx + 0.5) * cell;
         const py = (cy + 0.5) * cell;
+        const skin = currentSkin();
         for (let i = 0; i < 16; i++) {
-          const angle = Math.random() * Math.PI * 2;
+          const angle = Math.random() * TAU;
           const speed = cell * (0.8 + Math.random() * 2.6);
           G.particles.push({
             x: px + (Math.random() - 0.5) * cell * 0.24,
@@ -816,9 +1157,10 @@
             life: 1,
             decay: 1.1 + Math.random() * 0.9,
             size: cell * (0.03 + Math.random() * 0.05),
-            rot: Math.random() * Math.PI * 2,
+            rot: Math.random() * TAU,
             spin: (Math.random() - 0.5) * 10,
             cream: Math.random() > 0.35,
+            gem: skin.gem,
           });
         }
       }
@@ -842,7 +1184,7 @@
       function smoothPath(points) {
         if (points.length < 3) return points.slice();
         let pts = points;
-        for (let pass = 0; pass < 2; pass++) {
+        for (let pass = 0; pass < 3; pass++) {
           const out = [pts[0]];
           for (let i = 0; i < pts.length - 1; i++) {
             const p = pts[i];
@@ -867,7 +1209,6 @@
         return Math.max(cell * 0.05, r);
       }
 
-      // 沿路径按等间距重采样，消除蛇尾的“串珠”感
       function resample(points, spacing) {
         if (points.length < 2) return points.slice();
         const out = [points[0]];
@@ -894,67 +1235,92 @@
         return out;
       }
 
+      function bodyPoints() {
+        const progress = G.status === 'running' ? clamp(G.acc / G.stepMs, 0, 1) : 0;
+        const pred = G.pred;
+        const source = pred || G.snake;
+        const n = pred ? pred.length : G.snake.length;
+        const pts = [];
+        for (let i = 0; i < n; i++) {
+          const to = source[i] || G.snake[i];
+          const from = G.snake[i] || to;
+          pts.push({
+            x: (from.x + (to.x - from.x) * progress + 0.5) * cell,
+            y: (from.y + (to.y - from.y) * progress + 0.5) * cell,
+          });
+        }
+        return pts;
+      }
+
+      function mix(a, b, t) {
+        return [
+          Math.round(a[0] + (b[0] - a[0]) * t),
+          Math.round(a[1] + (b[1] - a[1]) * t),
+          Math.round(a[2] + (b[2] - a[2]) * t),
+        ];
+      }
+
       function drawBody(pts) {
         const n = pts.length;
-        if (n === 0) return;
-        const last = Math.max(1, n - 1);
+        if (n < 2) return;
+        const skin = currentSkin();
+        const last = n - 1;
 
-        // 地面投影
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
-        for (let i = 0; i < n; i += 2) {
+        // 投影
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.24)';
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        for (let i = 1; i < n; i += 2) {
           const p = i / last;
-          const r = bodyRadius(p);
+          ctx.lineWidth = bodyRadius(p) * 2;
           ctx.beginPath();
-          ctx.arc(pts[i].x + cell * 0.06, pts[i].y + cell * 0.09, Math.max(1, r), 0, Math.PI * 2);
-          ctx.fill();
+          ctx.moveTo(pts[i - 1].x + cell * 0.06, pts[i - 1].y + cell * 0.1);
+          ctx.lineTo(pts[i].x + cell * 0.06, pts[i].y + cell * 0.1);
+          ctx.stroke();
         }
 
         // 深色外轮廓
-        ctx.fillStyle = 'rgba(34, 19, 9, 0.92)';
-        for (let i = 0; i < n; i++) {
+        ctx.strokeStyle = 'rgba(34, 19, 9, 0.94)';
+        for (let i = 1; i < n; i++) {
           const p = i / last;
-          const r = bodyRadius(p) + 1.3;
+          ctx.lineWidth = bodyRadius(p) * 2 + 2.4;
           ctx.beginPath();
-          ctx.arc(pts[i].x, pts[i].y, r, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.moveTo(pts[i - 1].x, pts[i - 1].y);
+          ctx.lineTo(pts[i].x, pts[i].y);
+          ctx.stroke();
         }
 
         // 皮肤与环纹
         let dist = 0;
-        for (let i = 0; i < n; i++) {
-          if (i > 0) {
-            dist += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
-          }
+        for (let i = 1; i < n; i++) {
+          dist += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
           const p = i / last;
-          const r = bodyRadius(p);
-          const band = Math.pow(0.5 + 0.5 * Math.sin((dist / (cell * 1.55)) * Math.PI * 2), 2.6);
-          const cr = Math.round(214 - band * 122);
-          const cg = Math.round(158 - band * 94);
-          const cb = Math.round(98 - band * 56);
-          ctx.fillStyle = 'rgb(' + cr + ',' + cg + ',' + cb + ')';
+          const band = Math.pow(0.5 + 0.5 * Math.sin((dist / (cell * 1.62)) * TAU), 2.2);
+          const c = mix(skin.lo, skin.hi, 1 - band * 0.78);
+          ctx.strokeStyle = 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
+          ctx.lineWidth = bodyRadius(p) * 2;
           ctx.beginPath();
-          ctx.arc(pts[i].x, pts[i].y, r, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.moveTo(pts[i - 1].x, pts[i - 1].y);
+          ctx.lineTo(pts[i].x, pts[i].y);
+          ctx.stroke();
         }
 
         // 背脊高光
-        ctx.strokeStyle = 'rgba(255, 228, 182, 0.16)';
-        ctx.lineWidth = Math.max(1, cell * 0.04);
-        ctx.lineJoin = 'round';
-        ctx.lineCap = 'round';
+        ctx.strokeStyle = 'rgba(255, 236, 196, 0.16)';
+        ctx.lineWidth = Math.max(1, cell * 0.045);
         ctx.beginPath();
         for (let i = 0; i < n; i++) {
-          const x = pts[i].x - cell * 0.015;
-          const y = pts[i].y - cell * 0.032;
+          const x = pts[i].x - cell * 0.02;
+          const y = pts[i].y - cell * 0.045;
           if (i === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
         ctx.stroke();
 
-        // 鳞片短纹
-        ctx.strokeStyle = 'rgba(40, 20, 8, 0.16)';
-        ctx.lineWidth = 0.8;
-        for (let i = 3; i < n - 3; i += 4) {
+        // 鳞片细纹
+        ctx.strokeStyle = 'rgba(44, 22, 10, 0.14)';
+        ctx.lineWidth = 0.9;
+        for (let i = 5; i < n - 4; i += 7) {
           const p = i / last;
           const r = bodyRadius(p);
           const a = Math.atan2(pts[i + 1].y - pts[i - 1].y, pts[i + 1].x - pts[i - 1].x);
@@ -962,8 +1328,8 @@
           const ny = Math.cos(a);
           for (const s of [-1, 1]) {
             ctx.beginPath();
-            ctx.moveTo(pts[i].x + nx * s * r * 0.2, pts[i].y + ny * s * r * 0.2);
-            ctx.lineTo(pts[i].x + nx * s * r * 0.8, pts[i].y + ny * s * r * 0.8);
+            ctx.moveTo(pts[i].x + nx * s * r * 0.22, pts[i].y + ny * s * r * 0.22);
+            ctx.lineTo(pts[i].x + nx * s * r * 0.82, pts[i].y + ny * s * r * 0.82);
             ctx.stroke();
           }
         }
@@ -983,10 +1349,11 @@
       function drawHead(pts, t) {
         const head = pts[0];
         if (!head) return;
+        const skin = currentSkin();
 
         let ang = Math.atan2(G.dir.y, G.dir.x);
-        if (pts.length > 1) {
-          const nb = pts[Math.min(pts.length - 1, 5)];
+        if (pts.length > 2) {
+          const nb = pts[Math.min(pts.length - 1, 8)];
           const dx = head.x - nb.x;
           const dy = head.y - nb.y;
           if (Math.hypot(dx, dy) > 1) ang = Math.atan2(dy, dx);
@@ -999,7 +1366,7 @@
 
         // 吐信
         const flick = Math.sin(t / 620);
-        if (flick > 0.25) {
+        if (flick > 0.25 && G.status === 'running') {
           const ext = (flick - 0.25) / 0.75;
           const len = c * (0.16 + 0.44 * ext);
           ctx.strokeStyle = 'rgba(198, 70, 86, 0.9)';
@@ -1018,38 +1385,33 @@
         const rx = c * 0.6;
         const ry = c * 0.42;
 
-        // 头部投影
         ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
         ctx.beginPath();
-        ctx.ellipse(c * 0.05, c * 0.09, c * 0.58, c * 0.39, 0, 0, Math.PI * 2);
+        ctx.ellipse(c * 0.05, c * 0.09, c * 0.58, c * 0.39, 0, 0, TAU);
         ctx.fill();
 
-        // 外轮廓
         ctx.fillStyle = 'rgba(32, 18, 9, 0.95)';
         headPath(rx + 1.5, ry + 1.5);
         ctx.fill();
 
-        // 头部底色
         const g = ctx.createLinearGradient(0, -ry, 0, ry);
-        g.addColorStop(0, '#d39a60');
-        g.addColorStop(0.55, '#b97a43');
-        g.addColorStop(1, '#855231');
+        g.addColorStop(0, skin.head[0]);
+        g.addColorStop(0.55, skin.head[1]);
+        g.addColorStop(1, skin.head[2]);
         ctx.fillStyle = g;
         headPath(rx, ry);
         ctx.fill();
 
-        // 头顶深色斑纹
-        ctx.fillStyle = 'rgba(88, 46, 22, 0.85)';
+        ctx.fillStyle = 'rgba(70, 40, 18, 0.42)';
         ctx.beginPath();
-        ctx.ellipse(c * 0.02, 0, c * 0.3, c * 0.15, 0, 0, Math.PI * 2);
+        ctx.ellipse(c * 0.02, 0, c * 0.3, c * 0.15, 0, 0, TAU);
         ctx.fill();
         for (const s of [-1, 1]) {
           ctx.beginPath();
-          ctx.ellipse(c * 0.32, s * c * 0.15, c * 0.16, c * 0.042, s * 0.32, 0, Math.PI * 2);
+          ctx.ellipse(c * 0.32, s * c * 0.15, c * 0.16, c * 0.042, s * 0.32, 0, TAU);
           ctx.fill();
         }
 
-        // 眼睛
         const eyeR = Math.max(2.4, c * 0.105);
         for (const s of [-1, 1]) {
           const ex = c * 0.1;
@@ -1057,40 +1419,39 @@
 
           ctx.fillStyle = 'rgba(26, 14, 6, 0.92)';
           ctx.beginPath();
-          ctx.ellipse(ex, ey, eyeR * 1.32, eyeR * 1.22, 0, 0, Math.PI * 2);
+          ctx.ellipse(ex, ey, eyeR * 1.32, eyeR * 1.22, 0, 0, TAU);
           ctx.fill();
 
           const ig = ctx.createRadialGradient(ex - eyeR * 0.25, ey - eyeR * 0.25, eyeR * 0.15, ex, ey, eyeR);
-          ig.addColorStop(0, '#f7d992');
+          ig.addColorStop(0, skin.eye);
           ig.addColorStop(1, '#a2682a');
           ctx.fillStyle = ig;
           ctx.beginPath();
-          ctx.arc(ex, ey, eyeR, 0, Math.PI * 2);
+          ctx.arc(ex, ey, eyeR, 0, TAU);
           ctx.fill();
 
           ctx.fillStyle = '#0d0803';
           ctx.beginPath();
-          ctx.ellipse(ex, ey, eyeR * 0.24, eyeR * 0.76, 0, 0, Math.PI * 2);
+          ctx.ellipse(ex, ey, eyeR * 0.24, eyeR * 0.76, 0, 0, TAU);
           ctx.fill();
 
           ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
           ctx.beginPath();
-          ctx.arc(ex - eyeR * 0.32, ey - eyeR * 0.34, eyeR * 0.19, 0, Math.PI * 2);
+          ctx.arc(ex - eyeR * 0.32, ey - eyeR * 0.34, eyeR * 0.19, 0, TAU);
           ctx.fill();
         }
 
-        // 鼻孔
         ctx.fillStyle = 'rgba(26, 14, 6, 0.85)';
         for (const s of [-1, 1]) {
           ctx.beginPath();
-          ctx.ellipse(c * 0.48, s * c * 0.055, c * 0.024, c * 0.016, 0, 0, Math.PI * 2);
+          ctx.ellipse(c * 0.48, s * c * 0.055, c * 0.024, c * 0.016, 0, 0, TAU);
           ctx.fill();
         }
 
         ctx.restore();
       }
 
-      /* ---------------- 绘制：蛇蛋与场景 ---------------- */
+      /* ---------------- 绘制：蛇蛋 / 粒子 ---------------- */
 
       function drawFood(t) {
         const c = cell;
@@ -1100,26 +1461,23 @@
         const ry = c * 0.3;
         const cy = (G.food.y + 0.5) * c + bob - c * 0.02;
 
-        // 投影
         ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
         ctx.beginPath();
-        ctx.ellipse(cx + c * 0.05, cy + ry * 0.94, c * 0.26, c * 0.1, 0, 0, Math.PI * 2);
+        ctx.ellipse(cx + c * 0.05, cy + ry * 0.94, c * 0.26, c * 0.1, 0, 0, TAU);
         ctx.fill();
 
-        // 柔和光晕，让蛋在草丛中更醒目
         const halo = ctx.createRadialGradient(cx, cy, rx * 0.5, cx, cy, rx * 2.6);
         halo.addColorStop(0, 'rgba(255, 240, 196, 0.14)');
         halo.addColorStop(1, 'rgba(255, 240, 196, 0)');
         ctx.fillStyle = halo;
         ctx.beginPath();
-        ctx.arc(cx, cy, rx * 2.6, 0, Math.PI * 2);
+        ctx.arc(cx, cy, rx * 2.6, 0, TAU);
         ctx.fill();
 
-        // 草窝
         ctx.strokeStyle = 'rgba(136, 158, 92, 0.62)';
         ctx.lineWidth = Math.max(1, c * 0.035);
         for (let i = 0; i < 8; i++) {
-          const a = (i / 8) * Math.PI * 2 + 0.35;
+          const a = (i / 8) * TAU + 0.35;
           const x1 = cx + Math.cos(a) * rx * 1.34;
           const y1 = cy + Math.sin(a) * ry * 1.14;
           ctx.beginPath();
@@ -1133,34 +1491,30 @@
           ctx.stroke();
         }
 
-        // 蛋壳描边
         ctx.fillStyle = 'rgba(52, 42, 26, 0.55)';
         ctx.beginPath();
-        ctx.ellipse(cx, cy, rx + 1.6, ry + 1.6, 0, 0, Math.PI * 2);
+        ctx.ellipse(cx, cy, rx + 1.6, ry + 1.6, 0, 0, TAU);
         ctx.fill();
 
-        // 蛋壳
         const g = ctx.createRadialGradient(cx - rx * 0.4, cy - ry * 0.45, rx * 0.18, cx, cy, ry * 1.08);
         g.addColorStop(0, '#fffdf4');
         g.addColorStop(0.6, '#efe1c4');
         g.addColorStop(1, '#c3ae85');
         ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+        ctx.ellipse(cx, cy, rx, ry, 0, 0, TAU);
         ctx.fill();
 
-        // 斑点
         ctx.fillStyle = 'rgba(116, 90, 56, 0.5)';
         for (const s of G.food.spots) {
           ctx.beginPath();
-          ctx.ellipse(cx + s.x * rx, cy + s.y * ry, s.r * rx, s.r * ry * 0.8, 0, 0, Math.PI * 2);
+          ctx.ellipse(cx + s.x * rx, cy + s.y * ry, s.r * rx, s.r * ry * 0.8, 0, 0, TAU);
           ctx.fill();
         }
 
-        // 高光
         ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
         ctx.beginPath();
-        ctx.ellipse(cx - rx * 0.35, cy - ry * 0.5, rx * 0.24, ry * 0.12, -0.5, 0, Math.PI * 2);
+        ctx.ellipse(cx - rx * 0.35, cy - ry * 0.5, rx * 0.24, ry * 0.12, -0.5, 0, TAU);
         ctx.fill();
       }
 
@@ -1171,7 +1525,7 @@
           ctx.globalAlpha = Math.min(1, p.life * 1.4);
           ctx.translate(p.x, p.y);
           ctx.rotate(p.rot);
-          ctx.fillStyle = p.cream ? '#f3e9d2' : '#e7b45c';
+          ctx.fillStyle = p.cream ? '#f3e9d2' : p.gem;
           ctx.beginPath();
           ctx.moveTo(-p.size, -p.size * 0.6);
           ctx.lineTo(p.size, 0);
@@ -1185,18 +1539,307 @@
 
       function draw(t) {
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        if (size > 0) ctx.drawImage(boardCache, 0, 0, size, size);
+        if (size > 0) {
+          ctx.drawImage(boardCache, 0, 0, size, size);
+          ctx.drawImage(rockCache, 0, 0, size, size);
+        }
         drawFood(t);
         if (G.snake.length) {
-          const pts = resample(smoothPath(bodyPoints()), cell * 0.13);
+          const pts = resample(smoothPath(bodyPoints()), cell * 0.16);
           drawBody(pts);
           drawHead(pts, t);
         }
         drawParticles();
+
+        if (G.nearMiss > 0) {
+          const a = G.nearMiss;
+          const grd = ctx.createRadialGradient(size / 2, size / 2, size * 0.34, size / 2, size / 2, size * 0.72);
+          grd.addColorStop(0, 'rgba(255, 214, 140, 0)');
+          grd.addColorStop(1, 'rgba(255, 214, 140, ' + (0.22 * a) + ')');
+          ctx.fillStyle = grd;
+          ctx.fillRect(0, 0, size, size);
+        }
+
         if (G.deathFlash > 0) {
           ctx.fillStyle = 'rgba(120, 20, 26, ' + G.deathFlash * 0.3 + ')';
           ctx.fillRect(0, 0, size, size);
         }
+      }
+
+      /* ---------------- 覆盖层 ---------------- */
+
+      function setOverlay(html) {
+        el.overlay.innerHTML = '<div class="ov-inner">' + html + '</div>';
+        el.overlay.classList.remove('hidden');
+      }
+
+      function hideOverlay() {
+        el.overlay.classList.add('hidden');
+      }
+
+      function starsMarkup(n, total) {
+        let s = '';
+        for (let i = 0; i < total; i++) s += '<span class="' + (i < n ? 'on' : '') + '">★</span>';
+        return s;
+      }
+
+      function missionsMarkup() {
+        return MISSION_DEFS.map((m) => {
+          const st = missionState(m);
+          const pct = Math.round((st.progress / m.target) * 100);
+          return '<div class="mission ' + (st.done ? 'done' : '') + '">' +
+            '<span class="mname">' + m.label + '</span>' +
+            '<span class="mbar"><i style="width:' + pct + '%"></i></span>' +
+            '<span class="mreward">' + (st.done ? '已领' : st.progress + '/' + m.target) + '</span>' +
+            '</div>';
+        }).join('');
+      }
+
+      function renderIdleOverlay() {
+        const lv = clamp(RET.unlocked, 1, LEVELS.length);
+        const cfg = LEVELS[lv - 1];
+        setOverlay(
+          '<span class="kicker">snake in the grass</span>' +
+          '<h1>林间蛇影</h1>' +
+          '<p>按住画面并移动鼠标控制方向，松开暂停。<br>吃掉蛇蛋达成目标即可过关。</p>' +
+          '<div class="ov-stats">' +
+            '<div class="ov-stat"><span class="k">连续天数</span><span class="v">' + RET.streak + '</span></div>' +
+            '<div class="ov-stat"><span class="k">总星数</span><span class="v">' + totalStars() + '/' + (LEVELS.length * 3) + '</span></div>' +
+            '<div class="ov-stat"><span class="k">金币</span><span class="v">' + RET.coins + '</span></div>' +
+          '</div>' +
+          '<div class="panel"><h2>今日目标 · 连续 ' + RET.streak + ' 天，金币 ×' + streakMultiplier().toFixed(1) + '</h2>' + missionsMarkup() + '</div>' +
+          '<button class="btn-primary" data-action="play" data-level="' + lv + '">开始第 ' + lv + ' 关 · 目标 ' + cfg.target + '</button>' +
+          '<div class="btn-row"><button class="btn-ghost" data-action="select">选关与皮肤</button></div>'
+        );
+      }
+
+      function renderSelectOverlay() {
+        const cells = LEVELS.map((L, i) => {
+          const n = i + 1;
+          const locked = n > RET.unlocked;
+          const st = RET.stars[n] || 0;
+          return '<button class="lv ' + (st ? 'done' : '') + '" data-action="play" data-level="' + n + '"' +
+            (locked ? ' disabled' : '') + '>' +
+            (locked ? '锁' : String(n).padStart(2, '0')) +
+            '<span class="st">' + (locked ? '' : '★'.repeat(st) + '☆'.repeat(3 - st)) + '</span>' +
+            '</button>';
+        }).join('');
+
+        const skins = SKINS.map((s) => {
+          const owned = RET.owned.indexOf(s.id) >= 0;
+          const active = RET.skin === s.id;
+          return '<button class="skin ' + (active ? 'active' : '') + '" data-action="skin" data-skin="' + s.id + '"' +
+            (!owned && RET.coins < s.cost ? ' disabled' : '') + '>' +
+            s.name +
+            '<span class="price">' + (active ? '使用中' : owned ? '点击使用' : s.cost + ' 金币') + '</span>' +
+            '</button>';
+        }).join('');
+
+        setOverlay(
+          '<span class="kicker">level select</span>' +
+          '<h1>选择关卡</h1>' +
+          '<p>已解锁 ' + RET.unlocked + ' / ' + LEVELS.length + ' 关 · 共 ' + totalStars() + ' 颗星</p>' +
+          '<div class="level-grid">' + cells + '</div>' +
+          '<div class="panel"><h2>皮肤</h2><div class="shop">' + skins + '</div></div>' +
+          '<div class="btn-row"><button class="btn-ghost" data-action="back">返回</button></div>'
+        );
+      }
+
+      function renderClearOverlay(stars, seconds, bonus) {
+        const nextLv = Math.min(LEVELS.length, G.level + 1);
+        const last = G.level >= LEVELS.length;
+        setOverlay(
+          '<span class="kicker">level clear</span>' +
+          '<h1>' + (last ? '全部通关' : '第 ' + G.level + ' 关完成') + '</h1>' +
+          '<div class="big-stars">' + starsMarkup(stars, 3) + '</div>' +
+          '<div class="ov-stats">' +
+            '<div class="ov-stat"><span class="k">用时</span><span class="v">' + seconds.toFixed(1) + 's</span></div>' +
+            '<div class="ov-stat"><span class="k">获得</span><span class="v">+' + bonus + '</span></div>' +
+            '<div class="ov-stat"><span class="k">连续</span><span class="v">' + RET.streak + '天</span></div>' +
+          '</div>' +
+          '<div class="panel"><h2>今日目标</h2>' + missionsMarkup() + '</div>' +
+          (last
+            ? '<button class="btn-primary" data-action="select">查看全部关卡</button>'
+            : '<button class="btn-primary" data-action="play" data-level="' + nextLv + '">下一关 · ' + nextLv + '</button>') +
+          '<div class="btn-row">' +
+            '<button class="btn-ghost" data-action="play" data-level="' + G.level + '">重玩本关</button>' +
+            '<button class="btn-ghost" data-action="select">选关</button>' +
+          '</div>'
+        );
+      }
+
+      function renderOverOverlay() {
+        setOverlay(
+          '<span class="kicker">run ended</span>' +
+          '<h1>蛇影消散</h1>' +
+          '<p>本关目标 ' + G.eggs + '/' + G.target + '，再试一次就能过。</p>' +
+          '<div class="ov-stats">' +
+            '<div class="ov-stat"><span class="k">关卡</span><span class="v">' + G.level + '</span></div>' +
+            '<div class="ov-stat"><span class="k">吃到</span><span class="v">' + G.eggs + '</span></div>' +
+            '<div class="ov-stat"><span class="k">金币</span><span class="v">' + RET.coins + '</span></div>' +
+          '</div>' +
+          '<button class="btn-primary" data-action="play" data-level="' + G.level + '">再试一次</button>' +
+          '<div class="btn-row"><button class="btn-ghost" data-action="select">选关</button></div>'
+        );
+      }
+
+      el.overlay.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const action = btn.dataset.action;
+
+        if (action === 'play') {
+          startLevel(Number(btn.dataset.level) || 1);
+        } else if (action === 'select') {
+          G.holding = false;
+          renderSelectOverlay();
+        } else if (action === 'back') {
+          renderIdleOverlay();
+        } else if (action === 'skin') {
+          const s = SKINS.find((x) => x.id === btn.dataset.skin);
+          if (!s) return;
+          const owned = RET.owned.indexOf(s.id) >= 0;
+          if (owned) {
+            RET.skin = s.id;
+            toast('已切换：' + s.name);
+          } else if (RET.coins >= s.cost) {
+            RET.coins -= s.cost;
+            RET.owned.push(s.id);
+            RET.skin = s.id;
+            toast('解锁皮肤：' + s.name);
+            tone(720, 0.12, 'triangle', 0.09);
+          } else {
+            toast('金币不足');
+            return;
+          }
+          persist();
+          updateHud();
+          renderSelectOverlay();
+        }
+      });
+
+      /* ---------------- 输入：连续转向 + 按住运行 ---------------- */
+
+      function queueDir(dx, dy) {
+        if (G.status !== 'running') return;
+        const base = G.queue.length ? G.queue[G.queue.length - 1] : G.dir;
+        if (dx === base.x && dy === base.y) return;
+        if (dx === -base.x && dy === -base.y) return;
+        if (G.queue.length >= 2) return;
+
+        // 只入队，不强行结算：避免插值进度瞬间跳到 1 造成视觉前冲
+        G.queue.push({ x: dx, y: dy });
+      }
+
+      function updateSteering() {
+        if (!G.holding || G.status !== 'running' || !pointer.has) return;
+        const head = G.snake[0];
+        if (!head) return;
+
+        const hx = (head.x + 0.5) * cell;
+        const hy = (head.y + 0.5) * cell;
+        const vx = pointer.x - hx;
+        const vy = pointer.y - hy;
+        if (Math.hypot(vx, vy) < cell * 0.62) return;
+
+        const ax = Math.abs(vx);
+        const ay = Math.abs(vy);
+
+        // 滞回：切换主轴需要超出 15%，避免 45° 附近抖动
+        let axis = G.steerAxis;
+        if (axis === 'x' && ay > ax * 1.15) axis = 'y';
+        else if (axis === 'y' && ax > ay * 1.15) axis = 'x';
+        else if (!axis) axis = ax >= ay ? 'x' : 'y';
+        G.steerAxis = axis;
+
+        let dx = 0;
+        let dy = 0;
+        if (axis === 'x') dx = vx > 0 ? 1 : -1;
+        else dy = vy > 0 ? 1 : -1;
+
+        const base = G.queue.length ? G.queue[G.queue.length - 1] : G.dir;
+        if (dx === base.x && dy === base.y) return;
+        if (dx === -base.x && dy === -base.y) return;
+
+        queueDir(dx, dy);
+      }
+
+      canvas.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        e.preventDefault();
+        activePointerId = e.pointerId;
+        resizePointer(e);
+        G.steerAxis = null;
+        try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+
+        if (G.status === 'running') {
+          G.holding = true;
+          hideHoldHint();
+        }
+      });
+
+      canvas.addEventListener('pointermove', (e) => {
+        if (activePointerId !== null && e.pointerId !== activePointerId) return;
+        resizePointer(e);
+      });
+
+      canvas.addEventListener('pointerup', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        if (activePointerId !== null && e.pointerId !== activePointerId) return;
+        activePointerId = null;
+        releaseHold();
+      });
+
+      canvas.addEventListener('pointercancel', () => {
+        activePointerId = null;
+        releaseHold();
+      });
+
+      canvas.addEventListener('lostpointercapture', () => {
+        releaseHold();
+      });
+
+      function releaseHold() {
+        if (!G.holding) return;
+        G.holding = false;
+        if (G.status === 'running') showHoldHint();
+      }
+
+      function showHoldHint() { el.holdHint.classList.add('show'); }
+      function hideHoldHint() { el.holdHint.classList.remove('show'); }
+
+      window.addEventListener('blur', releaseHold);
+      document.addEventListener('visibilitychange', () => { if (document.hidden) releaseHold(); });
+
+      window.addEventListener('keydown', (e) => {
+        const k = e.key.toLowerCase();
+        if (k === 'r') {
+          e.preventDefault();
+          startLevel(G.level);
+        } else if (k === 'escape') {
+          e.preventDefault();
+          G.holding = false;
+          renderSelectOverlay();
+        }
+      });
+
+      el.restartBtn.addEventListener('click', () => startLevel(G.level));
+      el.selectBtn.addEventListener('click', () => {
+        G.holding = false;
+        renderSelectOverlay();
+      });
+      el.soundBtn.addEventListener('click', () => {
+        soundOn = !soundOn;
+        el.soundBtn.textContent = soundOn ? '音效 开' : '音效 关';
+        if (soundOn) tone(560, 0.08, 'triangle', 0.08);
+      });
+
+      let toastTimer = 0;
+      function toast(msg) {
+        el.toast.textContent = msg;
+        el.toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => el.toast.classList.remove('show'), 1800);
       }
 
       /* ---------------- 主循环 ---------------- */
@@ -1208,17 +1851,26 @@
         lastT = t;
 
         if (G.status === 'running' && G.holding) {
+          updateSteering();
           G.acc += dt * 1000;
-          let guard = 0;
-          while (G.acc >= G.stepMs && G.status === 'running' && G.holding && guard++ < 4) {
+          if (G.acc >= G.stepMs) {
             G.acc -= G.stepMs;
+            // 一帧最多推进一步，杜绝卡顿后的瞬移
+            if (G.acc >= G.stepMs) G.acc = G.stepMs * 0.98;
             step();
+            if (G.status !== 'running') G.acc = 0;
           }
-          if (G.status !== 'running') G.acc = 0;
+        }
+
+        if (G.combo.timer > 0) {
+          G.combo.timer -= dt;
+          if (G.combo.timer <= 0) G.combo.count = 0;
         }
 
         updateParticles(dt);
         G.deathFlash = Math.max(0, G.deathFlash - dt * 2.2);
+        G.nearMiss = Math.max(0, G.nearMiss - dt * 2.6);
+
         draw(t);
         requestAnimationFrame(frame);
       }
@@ -1232,7 +1884,10 @@
         window.addEventListener('resize', resizeCanvas);
       }
 
-      toIdle();
+      G.rocks = buildRockSet(1);
+      G.pred = null;
+      updateHud();
+      renderIdleOverlay();
       requestAnimationFrame(frame);
     })();
   </script>
