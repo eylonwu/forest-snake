@@ -3,22 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0a120c" />
-  <title>林间蛇影 · 贪吃蛇</title>
+  <meta name="theme-color" content="#05070f" />
+  <title>霓虹贪吃蛇 · Neon Snake</title>
   <style>
     :root {
-      --bg: #0a100b;
-      --panel: rgba(24, 32, 22, 0.9);
-      --cream: #ece3cc;
-      --amber: #e8b96a;
-      --moss: #a9c98c;
-      --muted: #9aa88c;
-      --serif: Georgia, "Songti SC", "Noto Serif SC", "STSong", serif;
+      --bg: #05070f;
+      --ink: #0a0f24;
+      --card-a: #1b2454;
+      --card-b: #101636;
+      --line: rgba(110, 225, 255, 0.2);
+      --cyan: #48f0d4;
+      --violet: #8a6bff;
+      --pink: #ff5fb0;
+      --gold: #ffd15c;
+      --text: #eaf4ff;
+      --muted: #8ea2c4;
+      --ui: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+      --display: "Trebuchet MS", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
     }
 
     * { box-sizing: border-box; }
 
     html, body { height: 100%; }
+
+    html { background: #05070f; }
 
     body {
       margin: 0;
@@ -26,80 +34,170 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 18px 14px;
-      color: var(--cream);
-      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+      padding: 14px 12px;
+      color: var(--text);
+      font-family: var(--ui);
       background:
-        radial-gradient(1100px 650px at 50% -12%, rgba(138, 170, 100, 0.13), transparent 62%),
-        radial-gradient(900px 600px at 92% 108%, rgba(66, 96, 40, 0.16), transparent 60%),
-        radial-gradient(700px 500px at 6% 90%, rgba(40, 60, 30, 0.2), transparent 65%),
-        var(--bg);
+        radial-gradient(900px 620px at 8% -12%, rgba(138, 107, 255, 0.32), transparent 62%),
+        radial-gradient(760px 520px at 104% -4%, rgba(72, 240, 212, 0.2), transparent 58%),
+        radial-gradient(720px 520px at 50% 112%, rgba(255, 95, 176, 0.16), transparent 60%),
+        linear-gradient(180deg, #080c1e 0%, #05070f 72%);
       overflow-x: hidden;
     }
 
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.5;
+      background-image:
+        radial-gradient(1.4px 1.4px at 18% 22%, rgba(255, 255, 255, 0.5), transparent 60%),
+        radial-gradient(1.2px 1.2px at 72% 14%, rgba(120, 240, 255, 0.55), transparent 60%),
+        radial-gradient(1.6px 1.6px at 88% 62%, rgba(255, 145, 210, 0.5), transparent 60%),
+        radial-gradient(1.2px 1.2px at 32% 78%, rgba(255, 255, 255, 0.35), transparent 60%),
+        radial-gradient(1.3px 1.3px at 56% 44%, rgba(160, 200, 255, 0.4), transparent 60%);
+    }
+
     .app {
-      width: min(100%, 540px);
+      position: relative;
+      width: min(100%, 520px);
       display: flex;
       flex-direction: column;
-      align-items: stretch;
-      gap: 12px;
+      gap: 10px;
     }
+
+    /* ---------- 顶栏 ---------- */
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--display);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.26em;
+      color: #cfeaff;
+      text-transform: uppercase;
+      text-shadow: 0 0 16px rgba(72, 240, 212, 0.45);
+    }
+
+    .brand i {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan), 0 0 24px rgba(72, 240, 212, 0.5);
+    }
+
+    .coin-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px 6px 8px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #222c5c, #131a3c);
+      border: 1px solid rgba(255, 209, 92, 0.45);
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      font-family: var(--display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gold);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .coin-ico {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 34% 28%, #fff4c2, #ffcf4d 48%, #d98f0e 100%);
+      box-shadow: inset 0 -2px 0 rgba(120, 70, 0, 0.4), 0 0 10px rgba(255, 209, 92, 0.55);
+    }
+
+    /* ---------- HUD ---------- */
 
     .hud {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: 74px 1fr 74px;
       gap: 8px;
     }
 
-    .hud-item {
+    .hud-card {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
       padding: 8px 11px;
-      border-radius: 13px;
-      background: linear-gradient(180deg, rgba(34, 44, 30, 0.92), rgba(18, 25, 17, 0.94));
-      border: 1px solid rgba(214, 198, 160, 0.14);
-      box-shadow: inset 0 1px 0 rgba(240, 232, 200, 0.07);
+      border-radius: 14px;
+      background: linear-gradient(180deg, var(--card-a), var(--card-b));
+      border: 1px solid var(--line);
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.09);
       min-width: 0;
     }
 
-    .hud-item .label {
+    .hud-card .k {
       font-size: 10px;
-      letter-spacing: 0.1em;
-      color: rgba(196, 196, 164, 0.62);
+      letter-spacing: 0.16em;
+      color: var(--muted);
       white-space: nowrap;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
     }
 
-    .hud-item .value {
-      font-family: var(--serif);
-      font-size: 19px;
+    .hud-card .k b { color: var(--cyan); font-weight: 700; letter-spacing: 0.04em; }
+
+    .hud-card .v {
+      font-family: var(--display);
+      font-size: 20px;
       font-weight: 700;
-      line-height: 1.1;
+      line-height: 1.05;
       font-variant-numeric: tabular-nums;
-      color: var(--amber);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      color: var(--text);
+      text-shadow: 0 0 14px rgba(120, 200, 255, 0.35);
     }
 
-    .hud-item .value.goal { color: var(--moss); }
-    .hud-item .value.star { color: #f2d68b; }
-    .hud-item .value.coin { color: #e6c983; }
-    .hud-item .value.lv { color: var(--cream); }
+    .hud-bar {
+      position: relative;
+      height: 7px;
+      border-radius: 5px;
+      background: rgba(8, 14, 34, 0.85);
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+    }
+
+    .hud-bar i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, var(--cyan), #a6ff8f 60%, var(--gold));
+      box-shadow: 0 0 12px rgba(72, 240, 212, 0.75);
+      transition: width 0.25s ease;
+    }
+
+    /* ---------- 棋盘 ---------- */
 
     .board-wrap {
       position: relative;
-      width: min(100%, 520px, max(260px, calc(100dvh - 300px)));
+      width: min(100%, 520px, max(240px, calc(100dvh - 268px)));
       aspect-ratio: 1 / 1;
       margin: 0 auto;
-      border-radius: 20px;
+      border-radius: 22px;
       overflow: hidden;
-      background: #131e12;
+      background: #070b18;
       box-shadow:
-        0 0 0 1px rgba(214, 216, 170, 0.16),
-        0 0 0 7px rgba(16, 22, 14, 0.72),
-        0 28px 80px -30px rgba(0, 0, 0, 0.9),
-        inset 0 0 60px rgba(0, 0, 0, 0.5);
+        0 0 0 1px rgba(120, 235, 255, 0.35),
+        0 0 0 5px rgba(10, 16, 38, 0.9),
+        0 0 26px rgba(72, 240, 212, 0.22),
+        0 26px 60px -24px rgba(0, 0, 0, 0.95),
+        inset 0 0 70px rgba(0, 0, 0, 0.65);
     }
 
     canvas {
@@ -113,202 +211,291 @@
     .glass {
       position: absolute;
       inset: 0;
-      z-index: 4;
+      z-index: 5;
       pointer-events: none;
       background:
-        linear-gradient(126deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.025) 24%, rgba(255, 255, 255, 0) 42%),
-        radial-gradient(110% 40% at 50% 0%, rgba(255, 255, 255, 0.05), transparent 62%);
+        linear-gradient(140deg, rgba(160, 220, 255, 0.09) 0%, rgba(160, 220, 255, 0.02) 26%, rgba(255, 255, 255, 0) 44%),
+        radial-gradient(120% 34% at 50% 0%, rgba(140, 220, 255, 0.07), transparent 62%);
     }
+
+    /* ---------- 覆盖层 ---------- */
 
     .overlay {
       position: absolute;
       inset: 0;
-      z-index: 3;
+      z-index: 4;
       display: flex;
-      padding: 18px;
-      background: radial-gradient(circle at 50% 40%, rgba(10, 17, 10, 0.9), rgba(4, 7, 4, 0.97));
-      -webkit-backdrop-filter: blur(7px);
-      backdrop-filter: blur(7px);
+      padding: 16px;
+      background:
+        radial-gradient(circle at 50% 38%, rgba(20, 30, 68, 0.86), rgba(4, 6, 16, 0.96));
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
       overflow-y: auto;
       overscroll-behavior: contain;
       transition: opacity 0.22s ease, visibility 0.22s ease;
     }
 
-    .overlay.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
+    .overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
     .ov-inner {
       width: 100%;
-      max-width: 400px;
+      max-width: 392px;
       margin: auto;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 9px;
       text-align: center;
-      padding: 6px 0;
+      padding: 4px 0;
     }
 
-    .ov-inner .kicker {
-      font-size: 9.5px;
-      letter-spacing: 0.34em;
-      color: rgba(214, 198, 160, 0.55);
+    .kicker {
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      color: rgba(120, 240, 255, 0.65);
       text-transform: uppercase;
+      text-shadow: 0 0 12px rgba(72, 240, 212, 0.5);
     }
 
     .ov-inner h1 {
-      margin: 0 0 4px;
-      font-family: var(--serif);
-      font-size: clamp(22px, 5.6vw, 32px);
-      letter-spacing: 0.07em;
-      background: linear-gradient(180deg, #f7efd9 12%, #d9a45b 96%);
+      margin: 0;
+      font-family: var(--display);
+      font-size: clamp(24px, 6vw, 34px);
+      letter-spacing: 0.04em;
+      background: linear-gradient(180deg, #ffffff 8%, #8ff5e0 52%, #4fb6ff 100%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      filter: drop-shadow(0 0 18px rgba(72, 240, 212, 0.4));
     }
 
     .ov-inner p {
       margin: 0;
-      max-width: 36ch;
-      font-size: 13px;
-      line-height: 1.72;
-      color: rgba(190, 196, 168, 0.78);
+      max-width: 34ch;
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: rgba(176, 196, 226, 0.82);
     }
 
-    .ov-stats {
+    .chips { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; margin: 2px 0; }
+
+    .chip {
       display: flex;
-      gap: 18px;
-      justify-content: center;
-      margin: 6px 0 2px;
+      flex-direction: column;
+      gap: 1px;
+      padding: 6px 13px;
+      border-radius: 11px;
+      background: linear-gradient(180deg, rgba(38, 50, 96, 0.9), rgba(18, 24, 52, 0.92));
+      border: 1px solid rgba(120, 220, 255, 0.16);
+      min-width: 68px;
     }
 
-    .ov-stat { display: flex; flex-direction: column; gap: 1px; }
-    .ov-stat .k { font-size: 10px; letter-spacing: 0.12em; color: rgba(190, 196, 168, 0.6); }
-    .ov-stat .v { font-family: var(--serif); font-size: 19px; color: var(--amber); }
+    .chip .ck { font-size: 9.5px; letter-spacing: 0.1em; color: var(--muted); }
+    .chip .cv { font-family: var(--display); font-size: 15px; font-weight: 700; color: var(--cyan); }
 
     .big-stars {
-      font-size: 26px;
-      letter-spacing: 6px;
-      color: rgba(150, 150, 120, 0.35);
-      margin: 2px 0;
+      font-size: 27px;
+      letter-spacing: 7px;
+      color: rgba(90, 110, 150, 0.45);
+      margin: 2px 0 0;
+      line-height: 1;
     }
-    .big-stars .on { color: #f4d78c; text-shadow: 0 0 18px rgba(244, 215, 140, 0.5); }
+
+    .big-stars .on {
+      color: var(--gold);
+      text-shadow: 0 0 16px rgba(255, 209, 92, 0.85), 0 0 34px rgba(255, 170, 40, 0.5);
+    }
+
+    /* ---------- 按钮 ---------- */
 
     .btn-primary {
       margin-top: 8px;
-      padding: 12px 34px;
+      padding: 13px 36px;
       border: 0;
-      border-radius: 999px;
+      border-radius: 15px;
       cursor: pointer;
-      font-size: 15.5px;
+      font-family: var(--display);
+      font-size: 16px;
       font-weight: 700;
       letter-spacing: 0.06em;
-      color: #1b1409;
-      background: linear-gradient(180deg, #f2d79a, #d9a45b);
-      box-shadow: 0 12px 28px -12px rgba(233, 190, 110, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.55);
-      transition: transform 0.14s ease, filter 0.14s ease;
+      color: #3a2402;
+      background: linear-gradient(180deg, #ffe98f 0%, #ffc545 52%, #f0a017 100%);
+      box-shadow:
+        0 6px 0 #a4650a,
+        0 16px 30px -12px rgba(255, 180, 40, 0.7),
+        inset 0 2px 0 rgba(255, 255, 255, 0.8),
+        inset 0 -2px 0 rgba(160, 90, 0, 0.35);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.14s ease;
     }
-    .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.05); }
-    .btn-primary:active { transform: translateY(1px) scale(0.99); }
 
-    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+    .btn-primary:hover { filter: brightness(1.06); }
+
+    .btn-primary:active {
+      transform: translateY(4px);
+      box-shadow:
+        0 2px 0 #a4650a,
+        0 8px 16px -10px rgba(255, 180, 40, 0.7),
+        inset 0 2px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .btn-row { display: flex; gap: 9px; flex-wrap: wrap; justify-content: center; }
 
     .btn-ghost {
       padding: 10px 20px;
-      border: 1px solid rgba(214, 198, 160, 0.24);
-      border-radius: 999px;
-      background: rgba(28, 36, 24, 0.7);
-      color: #ded4b8;
-      font-size: 13px;
+      border-radius: 13px;
+      border: 1px solid rgba(120, 220, 255, 0.28);
+      background: linear-gradient(180deg, rgba(40, 54, 104, 0.9), rgba(18, 24, 52, 0.9));
+      color: #cfe6ff;
+      font-size: 12.5px;
       letter-spacing: 0.05em;
       cursor: pointer;
-      transition: background 0.15s ease, border-color 0.15s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: transform 0.1s ease, border-color 0.15s ease, box-shadow 0.1s ease;
     }
-    .btn-ghost:hover { background: rgba(56, 70, 42, 0.85); border-color: rgba(230, 214, 170, 0.42); }
+
+    .btn-ghost:hover { border-color: rgba(120, 240, 255, 0.55); }
+
+    .btn-ghost:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0, 0, 0, 0.45); }
+
+    /* ---------- 关卡格 ---------- */
 
     .level-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 7px;
+      gap: 8px;
       width: 100%;
       margin: 8px 0 2px;
     }
 
     .lv {
       position: relative;
-      padding: 9px 4px 7px;
-      border-radius: 11px;
-      border: 1px solid rgba(214, 198, 160, 0.18);
-      background: rgba(30, 40, 26, 0.75);
-      color: #e6dcc2;
+      padding: 10px 4px 8px;
+      border-radius: 13px;
+      border: 1px solid rgba(120, 220, 255, 0.2);
+      background: linear-gradient(180deg, #212c60, #131a3e);
+      color: var(--text);
       cursor: pointer;
-      font-family: var(--serif);
-      font-size: 15px;
+      font-family: var(--display);
+      font-size: 16px;
+      font-weight: 700;
       line-height: 1.1;
-      transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, border-color 0.12s ease;
     }
-    .lv:hover:not(:disabled) { transform: translateY(-1px); border-color: rgba(233, 190, 110, 0.55); background: rgba(48, 62, 38, 0.85); }
-    .lv .st { display: block; font-size: 9px; letter-spacing: 1px; color: #f0cd7f; margin-top: 2px; min-height: 11px; }
-    .lv:disabled { opacity: 0.38; cursor: not-allowed; }
-    .lv.done { border-color: rgba(233, 190, 110, 0.5); }
+
+    .lv:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: rgba(120, 240, 255, 0.6);
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.5), 0 0 18px rgba(72, 240, 212, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    }
+
+    .lv .st {
+      display: block;
+      font-size: 9.5px;
+      letter-spacing: 1.5px;
+      color: var(--gold);
+      margin-top: 3px;
+      min-height: 11px;
+    }
+
+    .lv.done { border-color: rgba(255, 209, 92, 0.55); }
+
+    .lv:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      background: linear-gradient(180deg, #1a2040, #0e132e);
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.45);
+    }
+
+    /* ---------- 面板 ---------- */
 
     .panel {
       width: 100%;
       margin-top: 6px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      background: rgba(22, 30, 20, 0.7);
-      border: 1px solid rgba(214, 198, 160, 0.12);
+      padding: 11px 13px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(28, 38, 78, 0.72), rgba(12, 17, 40, 0.8));
+      border: 1px solid rgba(120, 220, 255, 0.14);
       text-align: left;
     }
+
     .panel h2 {
-      margin: 0 0 7px;
-      font-size: 11px;
+      margin: 0 0 8px;
+      font-size: 10.5px;
       font-weight: 600;
-      letter-spacing: 0.16em;
-      color: rgba(214, 198, 160, 0.65);
+      letter-spacing: 0.18em;
+      color: rgba(150, 210, 255, 0.72);
+      text-transform: uppercase;
     }
 
     .mission {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 9px;
       font-size: 12px;
-      color: #cfc7ae;
+      color: #c7d6ee;
       padding: 4px 0;
     }
+
     .mission .mname { flex: 1; }
+
     .mission .mbar {
-      width: 62px;
-      height: 4px;
-      border-radius: 3px;
-      background: rgba(255, 255, 255, 0.1);
+      width: 64px;
+      height: 6px;
+      border-radius: 4px;
+      background: rgba(6, 10, 26, 0.9);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.7);
       overflow: hidden;
       flex: 0 0 auto;
     }
-    .mission .mbar i { display: block; height: 100%; background: linear-gradient(90deg, #9fc07a, #e8c987); }
-    .mission.done { color: #a9c98c; }
-    .mission .mreward { font-size: 11px; color: #e6c983; min-width: 34px; text-align: right; }
 
-    .shop { display: flex; gap: 7px; flex-wrap: wrap; }
+    .mission .mbar i {
+      display: block;
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--cyan), #a6ff8f);
+      box-shadow: 0 0 8px rgba(72, 240, 212, 0.6);
+    }
+
+    .mission.done { color: var(--cyan); }
+
+    .mission .mreward { font-size: 11px; color: var(--gold); min-width: 38px; text-align: right; }
+
+    .shop { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px; }
+
     .skin {
-      flex: 1 1 30%;
-      min-width: 92px;
-      padding: 8px 6px;
-      border-radius: 10px;
-      border: 1px solid rgba(214, 198, 160, 0.2);
-      background: rgba(30, 40, 26, 0.8);
-      color: #e2d8be;
+      position: relative;
+      min-width: 0;
+      padding: 8px 6px 7px;
+      border-radius: 12px;
+      border: 1px solid rgba(120, 220, 255, 0.2);
+      background: linear-gradient(180deg, #212c60, #131a3e);
+      color: #dbe8ff;
       font-size: 11.5px;
       cursor: pointer;
       line-height: 1.35;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
-    .skin .price { display: block; font-size: 10px; color: #e6c983; margin-top: 2px; }
-    .skin.active { border-color: rgba(233, 190, 110, 0.75); box-shadow: inset 0 0 0 1px rgba(233, 190, 110, 0.3); }
+
+    .skin .sw {
+      display: block;
+      width: 26px;
+      height: 26px;
+      margin: 0 auto 5px;
+      border-radius: 50%;
+      box-shadow: 0 0 12px currentColor, inset 0 -2px 4px rgba(0, 0, 0, 0.45);
+    }
+
+    .skin .price { display: block; font-size: 10px; color: var(--gold); margin-top: 2px; }
+
+    .skin.active {
+      border-color: rgba(255, 209, 92, 0.8);
+      box-shadow: 0 0 0 1px rgba(255, 209, 92, 0.35), 0 0 18px rgba(255, 190, 70, 0.28), 0 3px 0 rgba(0, 0, 0, 0.45);
+    }
+
     .skin:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    /* ---------- 提示与吐司 ---------- */
 
     .hold-hint {
       position: absolute;
@@ -319,85 +506,112 @@
       border-radius: 999px;
       font-size: 11.5px;
       letter-spacing: 0.08em;
-      color: #e9dfc0;
+      color: #d6f6ff;
       white-space: nowrap;
       pointer-events: none;
-      background: rgba(12, 18, 10, 0.82);
-      border: 1px solid rgba(220, 200, 150, 0.28);
+      background: rgba(8, 14, 34, 0.86);
+      border: 1px solid rgba(120, 240, 255, 0.32);
+      box-shadow: 0 0 16px rgba(72, 240, 212, 0.2);
       opacity: 0;
       transform: translate(-50%, -6px);
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
+
     .hold-hint.show { opacity: 1; transform: translate(-50%, 0); }
 
     .toast {
       position: absolute;
       left: 50%;
       bottom: 14px;
-      z-index: 5;
+      z-index: 6;
       transform: translate(-50%, 12px);
-      padding: 7px 16px;
-      border-radius: 999px;
+      padding: 8px 17px;
+      border-radius: 12px;
       font-size: 12px;
-      letter-spacing: 0.04em;
-      color: #1d1608;
-      background: linear-gradient(180deg, #f2d79a, #dcae66);
-      box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.8);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: #3a2402;
+      background: linear-gradient(180deg, #ffe98f, #ffc545);
+      box-shadow: 0 4px 0 #a4650a, 0 14px 26px -12px rgba(0, 0, 0, 0.85);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.24s ease, transform 0.24s ease;
+      transition: opacity 0.22s ease, transform 0.22s ease;
       white-space: nowrap;
     }
+
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    .bar { display: flex; justify-content: center; gap: 9px; flex-wrap: wrap; }
+    /* ---------- 底部操作条 ---------- */
+
+    .bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 
     .ghost {
-      padding: 8px 16px;
-      border: 1px solid rgba(214, 198, 160, 0.22);
-      border-radius: 999px;
-      background: rgba(28, 36, 24, 0.62);
-      color: #d8cfb6;
+      padding: 10px 6px;
+      border-radius: 13px;
+      border: 1px solid rgba(120, 220, 255, 0.2);
+      background: linear-gradient(180deg, rgba(34, 46, 92, 0.92), rgba(14, 20, 44, 0.92));
+      color: #cfe0f8;
       font-size: 12.5px;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.03em;
       cursor: pointer;
-      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transition: transform 0.1s ease, border-color 0.15s ease, box-shadow 0.1s ease;
     }
-    .ghost:hover { background: rgba(56, 70, 42, 0.8); border-color: rgba(230, 214, 170, 0.42); color: #f3ecd6; }
+
+    .ghost:hover { border-color: rgba(120, 240, 255, 0.5); }
+    .ghost:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5); }
 
     .hint {
       margin: 0;
       text-align: center;
-      font-size: 11.5px;
-      letter-spacing: 0.06em;
-      color: rgba(160, 172, 142, 0.72);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      color: rgba(142, 162, 196, 0.75);
+    }
+
+    @media (max-width: 440px) {
+      body { padding: 10px 8px; }
+      .app { gap: 8px; }
+      .brand { font-size: 11px; letter-spacing: 0.2em; }
+      .coin-pill { padding: 5px 11px 5px 7px; font-size: 13px; }
+      .hud { grid-template-columns: 62px 1fr 62px; gap: 6px; }
+      .hud-card { padding: 7px 9px; border-radius: 12px; }
+      .hud-card .v { font-size: 17px; }
+      .overlay { padding: 12px; }
+      .ov-inner { gap: 7px; }
+      .ov-inner h1 { font-size: 23px; }
+      .level-grid { gap: 6px; }
+      .lv { font-size: 14px; padding: 8px 2px 6px; }
+      .skin { font-size: 11px; }
+      .btn-primary { padding: 12px 28px; font-size: 15px; }
     }
   </style>
 </head>
 <body>
   <main class="app">
-    <header class="hud">
-      <div class="hud-item">
-        <span class="label">关卡</span>
-        <span class="value lv" id="hud-level">01</span>
-      </div>
-      <div class="hud-item">
-        <span class="label">目标</span>
-        <span class="value goal" id="hud-goal">0/5</span>
-      </div>
-      <div class="hud-item">
-        <span class="label">星星</span>
-        <span class="value star" id="hud-stars">0</span>
-      </div>
-      <div class="hud-item">
-        <span class="label">金币</span>
-        <span class="value coin" id="hud-coins">0</span>
-      </div>
+    <header class="topbar">
+      <div class="brand"><i></i> NEON SNAKE</div>
+      <div class="coin-pill"><span class="coin-ico"></span><span id="hud-coins">0</span></div>
     </header>
 
+    <div class="hud">
+      <div class="hud-card">
+        <span class="k">关卡</span>
+        <span class="v" id="hud-level">01</span>
+      </div>
+      <div class="hud-card">
+        <span class="k">目标 <b id="hud-goal">0/5</b></span>
+        <div class="hud-bar"><i id="hud-bar"></i></div>
+      </div>
+      <div class="hud-card">
+        <span class="k">星星</span>
+        <span class="v" id="hud-stars">0</span>
+      </div>
+    </div>
+
     <section class="board-wrap">
-      <canvas id="game" width="420" height="420" aria-label="草丛中的蛇"></canvas>
-      <div class="hold-hint" id="hold-hint">已松开，按住拖动继续</div>
+      <canvas id="game" width="420" height="420" aria-label="霓虹贪吃蛇游戏画面"></canvas>
+      <div class="hold-hint" id="hold-hint">已松开 · 按住拖动继续</div>
       <div class="overlay" id="overlay"></div>
       <div class="toast" id="toast"></div>
       <div class="glass"></div>
@@ -418,7 +632,7 @@
 
       const COLS = 21;
       const ROWS = 21;
-      const SAVE_KEY = 'forest-snake-save-v3';
+      const SAVE_KEY = 'neon-snake-save-v4';
       const TAU = Math.PI * 2;
 
       const LEVELS = [
@@ -437,13 +651,38 @@
       ];
 
       const SKINS = [
-        { id: 'forest', name: '林间琥珀', cost: 0,   hi: [230, 180, 120], lo: [92, 52, 26],  head: ['#d39a60', '#b97a43', '#855231'], eye: '#f7d992', gem: '#c98a4a' },
-        { id: 'jade',   name: '青竹翡翠', cost: 80,  hi: [166, 220, 150], lo: [30, 78, 48],  head: ['#9ed08a', '#6ba05c', '#3d6b38'], eye: '#f2e9a0', gem: '#78b06a' },
-        { id: 'coral',  name: '赤练朱砂', cost: 180, hi: [232, 132, 104], lo: [66, 26, 22],  head: ['#d5795f', '#a8503c', '#6f2f24'], eye: '#ffd9a0', gem: '#c96a52' },
+        {
+          id: 'neon', name: '霓虹青蛇', cost: 0,
+          hi: [140, 255, 226], lo: [26, 108, 168],
+          head: ['#9dfff0', '#31d6c8', '#147aa8'],
+          eye: '#eaffff', glow: 'rgba(80, 255, 226, 0.55)', gem: '#5ef2d6',
+          swatch: 'linear-gradient(135deg, #9dfff0, #1a7fa8)',
+        },
+        {
+          id: 'candy', name: '糖果粉蛇', cost: 90,
+          hi: [255, 176, 220], lo: [128, 40, 122],
+          head: ['#ffc9e8', '#ff6fb5', '#a82a80'],
+          eye: '#fff2ff', glow: 'rgba(255, 140, 210, 0.55)', gem: '#ff8fd0',
+          swatch: 'linear-gradient(135deg, #ffc9e8, #b02f86)',
+        },
+        {
+          id: 'virus', name: '暗紫病毒', cost: 180,
+          hi: [186, 134, 255], lo: [38, 16, 74],
+          head: ['#c29bff', '#7a45d8', '#371a72'],
+          eye: '#d9ff7a', glow: 'rgba(170, 110, 255, 0.55)', gem: '#a97bff',
+          swatch: 'linear-gradient(135deg, #c29bff, #371a72)',
+        },
+        {
+          id: 'amber', name: '琥珀金蛇', cost: 260,
+          hi: [255, 214, 140], lo: [122, 66, 24],
+          head: ['#ffd79a', '#d99a52', '#8a5220'],
+          eye: '#fff0b8', glow: 'rgba(255, 200, 110, 0.5)', gem: '#ffc06a',
+          swatch: 'linear-gradient(135deg, #ffd79a, #8a5220)',
+        },
       ];
 
       const MISSION_DEFS = [
-        { id: 'eggs', label: '吃掉 12 颗蛇蛋', target: 12, reward: 6 },
+        { id: 'eggs', label: '吃掉 12 颗能量球', target: 12, reward: 6 },
         { id: 'clears', label: '通关 1 个关卡', target: 1, reward: 8 },
         { id: 'stars', label: '累计获得 6 颗星', target: 6, reward: 10 },
       ];
@@ -454,6 +693,7 @@
       const el = {
         level: document.getElementById('hud-level'),
         goal: document.getElementById('hud-goal'),
+        bar: document.getElementById('hud-bar'),
         stars: document.getElementById('hud-stars'),
         coins: document.getElementById('hud-coins'),
         overlay: document.getElementById('overlay'),
@@ -479,8 +719,8 @@
           unlocked: 1,
           stars: {},
           coins: 0,
-          skin: 'forest',
-          owned: ['forest'],
+          skin: 'neon',
+          owned: ['neon'],
           skill: 0.35,
           streak: 0,
           lastDay: '',
@@ -492,10 +732,10 @@
         try {
           const raw = localStorage.getItem(SAVE_KEY);
           if (!raw) return base;
-          const p = JSON.parse(raw);
-          const merged = Object.assign(base, p || {});
-          merged.stars = (p && p.stars) || {};
-          merged.owned = (p && p.owned) || ['forest'];
+          const p = JSON.parse(raw) || {};
+          const merged = Object.assign(base, p);
+          merged.stars = p.stars || {};
+          merged.owned = p.owned || ['neon'];
           return merged;
         } catch (_) {
           return base;
@@ -554,7 +794,7 @@
         return n;
       }
 
-      // 动态难度：表现好微加速，连续失误微减速，保持“心流”
+      // 动态难度：表现好微加速，连续失误微减速，保持心流
       function speedFactor() {
         return clamp(1.06 - (RET.skill || 0.35) * 0.12, 0.92, 1.08);
       }
@@ -600,21 +840,23 @@
       }
 
       function sndEat() {
-        const b = 560 + Math.random() * 120;
-        tone(b, 0.09, 'triangle', 0.09);
-        tone(b * 1.5, 0.13, 'sine', 0.05, 0.035);
-      }
-      function sndDie() {
-        tone(170, 0.34, 'sawtooth', 0.11);
-        tone(96, 0.5, 'triangle', 0.09, 0.1);
-      }
-      function sndWin() {
-        tone(700, 0.14, 'triangle', 0.09);
-        tone(880, 0.16, 'triangle', 0.09, 0.11);
-        tone(1170, 0.24, 'sine', 0.08, 0.23);
+        const b = 660 + Math.random() * 140;
+        tone(b, 0.08, 'triangle', 0.09);
+        tone(b * 1.5, 0.12, 'sine', 0.055, 0.032);
       }
 
-      /* ---------------- 画布 / 场景缓存 ---------------- */
+      function sndDie() {
+        tone(210, 0.3, 'square', 0.09);
+        tone(96, 0.46, 'triangle', 0.1, 0.09);
+      }
+
+      function sndWin() {
+        tone(760, 0.13, 'triangle', 0.09);
+        tone(980, 0.14, 'triangle', 0.09, 0.1);
+        tone(1280, 0.24, 'sine', 0.08, 0.21);
+      }
+
+      /* ---------------- 画布与场景缓存 ---------------- */
 
       let size = 0;
       let cell = 0;
@@ -655,87 +897,31 @@
         b.setTransform(dpr, 0, 0, dpr, 0, 0);
         b.clearRect(0, 0, size, size);
 
-        const bg = b.createLinearGradient(0, 0, 0, size);
-        bg.addColorStop(0, '#22331f');
-        bg.addColorStop(0.55, '#1a2a1a');
-        bg.addColorStop(1, '#0d1710');
+        const bg = b.createLinearGradient(0, 0, size * 0.35, size);
+        bg.addColorStop(0, '#0d1533');
+        bg.addColorStop(0.5, '#080e22');
+        bg.addColorStop(1, '#04060f');
         b.fillStyle = bg;
         b.fillRect(0, 0, size, size);
 
-        const rand = mulberry32(0x51a7e2b);
-
-        for (let i = 0; i < 7; i++) {
-          const x = rand() * size;
-          const y = rand() * size;
-          const rad = size * (0.12 + rand() * 0.22);
-          const g = b.createRadialGradient(x, y, 0, x, y, rad);
-          g.addColorStop(0, 'rgba(120, 160, 90, ' + (0.05 + rand() * 0.06) + ')');
-          g.addColorStop(1, 'rgba(120, 160, 90, 0)');
+        // 极光光晕
+        const auroras = [
+          { x: size * 0.1, y: size * 0.02, r: size * 0.75, c: '138, 107, 255', a: 0.2 },
+          { x: size * 0.96, y: size * 0.3, r: size * 0.62, c: '72, 240, 212', a: 0.13 },
+          { x: size * 0.45, y: size * 1.02, r: size * 0.7, c: '255, 95, 176', a: 0.1 },
+        ];
+        for (const au of auroras) {
+          const g = b.createRadialGradient(au.x, au.y, 0, au.x, au.y, au.r);
+          g.addColorStop(0, 'rgba(' + au.c + ', ' + au.a + ')');
+          g.addColorStop(1, 'rgba(' + au.c + ', 0)');
           b.fillStyle = g;
           b.beginPath();
-          b.arc(x, y, rad, 0, TAU);
+          b.arc(au.x, au.y, au.r, 0, TAU);
           b.fill();
         }
 
-        const blades = Math.round(size * 1.9);
-        for (let i = 0; i < blades; i++) {
-          const x = rand() * size;
-          const y = rand() * size;
-          const len = size * (0.007 + rand() * 0.024);
-          const ang = -Math.PI / 2 + (rand() - 0.5) * 1.15;
-          const bend = (rand() - 0.5) * len * 0.8;
-          const hue = 88 + rand() * 48;
-          const sat = 26 + rand() * 26;
-          const light = 18 + rand() * 22;
-          b.strokeStyle = 'hsla(' + hue + ', ' + sat + '%, ' + light + '%, ' + (0.22 + rand() * 0.32) + ')';
-          b.lineWidth = 0.55 + rand() * 1.15;
-          b.beginPath();
-          b.moveTo(x, y);
-          b.quadraticCurveTo(
-            x + Math.cos(ang) * len * 0.5 + bend * 0.25,
-            y + Math.sin(ang) * len * 0.5,
-            x + Math.cos(ang) * len + bend,
-            y + Math.sin(ang) * len
-          );
-          b.stroke();
-        }
-
-        for (let i = 0; i < 64; i++) {
-          const x = rand() * size;
-          const y = rand() * size;
-          const w = size * (0.0035 + rand() * 0.008);
-          const h = w * (1.35 + rand() * 0.9);
-          const a = rand() * Math.PI;
-          b.fillStyle = 'hsla(' + (58 + rand() * 42) + ', ' + (28 + rand() * 22) + '%, ' + (18 + rand() * 16) + '%, ' + (0.22 + rand() * 0.3) + ')';
-          b.beginPath();
-          b.ellipse(x, y, w, h, a, 0, TAU);
-          b.fill();
-        }
-
-        const stones = 8 + Math.floor(rand() * 5);
-        for (let i = 0; i < stones; i++) {
-          const x = rand() * size;
-          const y = rand() * size;
-          const r = size * (0.006 + rand() * 0.012);
-          const rot = rand() * Math.PI;
-
-          b.fillStyle = 'rgba(0, 0, 0, 0.2)';
-          b.beginPath();
-          b.ellipse(x + r * 0.45, y + r * 0.5, r * 1.2, r * 0.8, rot, 0, TAU);
-          b.fill();
-
-          b.fillStyle = 'rgba(104, 110, 94, 0.55)';
-          b.beginPath();
-          b.ellipse(x, y, r * 1.15, r * 0.8, rot, 0, TAU);
-          b.fill();
-
-          b.fillStyle = 'rgba(156, 162, 138, 0.38)';
-          b.beginPath();
-          b.ellipse(x - r * 0.25, y - r * 0.24, r * 0.45, r * 0.28, rot, 0, TAU);
-          b.fill();
-        }
-
-        b.strokeStyle = 'rgba(230, 235, 200, 0.035)';
+        // 网格
+        b.strokeStyle = 'rgba(96, 200, 255, 0.07)';
         b.lineWidth = 1;
         b.beginPath();
         for (let i = 1; i < COLS; i++) {
@@ -750,41 +936,62 @@
         }
         b.stroke();
 
-        const vig = b.createRadialGradient(size * 0.5, size * 0.48, size * 0.28, size * 0.5, size * 0.48, size * 0.78);
+        // 主网格线
+        b.strokeStyle = 'rgba(110, 230, 255, 0.14)';
+        b.beginPath();
+        for (let i = 7; i < COLS; i += 7) {
+          const p = Math.round(i * cell) + 0.5;
+          b.moveTo(p, 0);
+          b.lineTo(p, size);
+          b.moveTo(0, p);
+          b.lineTo(size, p);
+        }
+        b.stroke();
+
+        // 浮尘
+        const rand = mulberry32(0x7c31a5);
+        for (let i = 0; i < 70; i++) {
+          const x = rand() * size;
+          const y = rand() * size;
+          const r = 0.5 + rand() * 1.3;
+          b.fillStyle = 'rgba(170, 225, 255, ' + (0.1 + rand() * 0.3) + ')';
+          b.beginPath();
+          b.arc(x, y, r, 0, TAU);
+          b.fill();
+        }
+
+        // 暗角
+        const vig = b.createRadialGradient(size * 0.5, size * 0.46, size * 0.3, size * 0.5, size * 0.5, size * 0.8);
         vig.addColorStop(0, 'rgba(0, 0, 0, 0)');
-        vig.addColorStop(1, 'rgba(0, 0, 0, 0.5)');
+        vig.addColorStop(1, 'rgba(0, 0, 0, 0.62)');
         b.fillStyle = vig;
         b.fillRect(0, 0, size, size);
 
-        const sun = b.createRadialGradient(size * 0.24, -size * 0.05, 0, size * 0.24, -size * 0.05, size * 0.85);
-        sun.addColorStop(0, 'rgba(255, 236, 170, 0.13)');
-        sun.addColorStop(0.45, 'rgba(255, 236, 170, 0.04)');
-        sun.addColorStop(1, 'rgba(255, 236, 170, 0)');
-        b.fillStyle = sun;
+        // 顶部冷光
+        const top = b.createRadialGradient(size * 0.5, -size * 0.08, 0, size * 0.5, -size * 0.08, size * 0.9);
+        top.addColorStop(0, 'rgba(140, 220, 255, 0.12)');
+        top.addColorStop(1, 'rgba(140, 220, 255, 0)');
+        b.fillStyle = top;
         b.fillRect(0, 0, size, size);
       }
 
-      function rockShape(c, pts) {
+      function shardShape(c, pts) {
         c.beginPath();
         c.moveTo(pts[0].x, pts[0].y);
         for (let i = 1; i < pts.length; i++) {
-          const p = pts[i];
-          const prev = pts[i - 1];
-          const mx = (prev.x + p.x) / 2;
-          const my = (prev.y + p.y) / 2;
-          c.quadraticCurveTo(prev.x, prev.y, mx, my);
+          c.lineTo(pts[i].x, pts[i].y);
         }
         c.closePath();
       }
 
-      function rockPoints(gx, gy, r) {
-        const rand = mulberry32(gx * 92821 + gy * 68917 + 13);
-        const n = 7;
+      function shardPoints(gx, gy, r) {
+        const rand = mulberry32(gx * 73856093 + gy * 19349663 + 7);
         const pts = [];
+        const n = 5;
         for (let i = 0; i < n; i++) {
-          const a = (i / n) * TAU;
-          const rad = r * (0.74 + rand() * 0.3);
-          pts.push({ x: Math.cos(a) * rad, y: Math.sin(a) * rad * 0.84 });
+          const a = (i / n) * TAU - Math.PI / 2 + (rand() - 0.5) * 0.34;
+          const rad = r * (0.66 + rand() * 0.42);
+          pts.push({ x: Math.cos(a) * rad, y: Math.sin(a) * rad * 0.92 });
         }
         return pts;
       }
@@ -804,63 +1011,52 @@
           const gy = Number(parts[1]);
           const cx = (gx + 0.5) * cell;
           const cy = (gy + 0.5) * cell;
-          const r = cell * 0.47;
+          const r = cell * 0.46;
           const seed = (gx * 73 + gy * 149) % 100;
-          const rot = (seed / 100) * 0.7 - 0.35;
+          const rot = (seed / 100) * 0.9 - 0.45;
 
-          // 落影
-          b.fillStyle = 'rgba(0, 0, 0, 0.42)';
+          // 地面光斑
+          b.fillStyle = 'rgba(0, 0, 0, 0.5)';
           b.beginPath();
-          b.ellipse(cx + cell * 0.08, cy + cell * 0.14, r * 0.95, r * 0.56, 0, 0, TAU);
+          b.ellipse(cx + cell * 0.06, cy + cell * 0.13, r * 0.92, r * 0.5, 0, 0, TAU);
           b.fill();
 
           b.save();
           b.translate(cx, cy);
           b.rotate(rot);
 
-          const pts = rockPoints(gx, gy, r);
+          const pts = shardPoints(gx, gy, r);
 
-          const g = b.createRadialGradient(-r * 0.36, -r * 0.42, r * 0.08, 0, 0, r * 1.15);
-          g.addColorStop(0, '#6f7666');
-          g.addColorStop(0.5, '#474e3f');
-          g.addColorStop(1, '#1e231b');
+          // 外发光
+          b.shadowColor = 'rgba(120, 240, 255, 0.65)';
+          b.shadowBlur = cell * 0.34;
+
+          const g = b.createLinearGradient(-r * 0.6, -r * 0.7, r * 0.6, r * 0.7);
+          g.addColorStop(0, '#2e3f80');
+          g.addColorStop(0.52, '#1a2350');
+          g.addColorStop(1, '#0a0e24');
           b.fillStyle = g;
-          rockShape(b, pts);
+          shardShape(b, pts);
           b.fill();
 
-          b.strokeStyle = 'rgba(12, 16, 11, 0.75)';
-          b.lineWidth = 1.1;
+          b.shadowBlur = 0;
+          b.strokeStyle = 'rgba(130, 245, 255, 0.75)';
+          b.lineWidth = 1.4;
           b.stroke();
 
-          // 顶面受光
-          b.save();
-          b.translate(-r * 0.12, -r * 0.16);
-          b.scale(0.6, 0.55);
-          b.fillStyle = 'rgba(176, 182, 156, 0.14)';
-          rockShape(b, pts);
+          // 棱面
+          b.beginPath();
+          b.moveTo(pts[0].x * 0.2, pts[0].y * 0.2);
+          b.lineTo(pts[2].x * 0.92, pts[2].y * 0.92);
+          b.strokeStyle = 'rgba(180, 250, 255, 0.28)';
+          b.lineWidth = 1;
+          b.stroke();
+
+          // 高光
+          b.fillStyle = 'rgba(200, 250, 255, 0.22)';
+          b.beginPath();
+          b.ellipse(-r * 0.22, -r * 0.3, r * 0.18, r * 0.32, -0.5, 0, TAU);
           b.fill();
-          b.restore();
-
-          // 石面颗粒
-          const rp = mulberry32(gx * 31 + gy * 17 + 5);
-          for (let i = 0; i < 5; i++) {
-            const a = rp() * TAU;
-            const d = rp() * r * 0.55;
-            b.fillStyle = 'rgba(20, 24, 17, ' + (0.18 + rp() * 0.22) + ')';
-            b.beginPath();
-            b.ellipse(Math.cos(a) * d, Math.sin(a) * d * 0.8, r * (0.05 + rp() * 0.09), r * (0.04 + rp() * 0.06), a, 0, TAU);
-            b.fill();
-          }
-
-          // 苔藓
-          for (let i = 0; i < 3; i++) {
-            const a = rp() * TAU;
-            const d = rp() * r * 0.5;
-            b.fillStyle = 'rgba(108, 146, 78, ' + (0.24 + rp() * 0.26) + ')';
-            b.beginPath();
-            b.ellipse(Math.cos(a) * d, Math.sin(a) * d * 0.7 - r * 0.28, r * (0.16 + rp() * 0.16), r * (0.07 + rp() * 0.06), 0, 0, TAU);
-            b.fill();
-          }
 
           b.restore();
         });
@@ -878,13 +1074,12 @@
         queue: [],
         pred: null,
         rocks: new Set(),
-        food: { x: 0, y: 0, spots: [] },
+        food: { x: 0, y: 0, sparks: [] },
         eggs: 0,
         target: LEVELS[0].target,
         stepMs: LEVELS[0].step,
         acc: 0,
         levelStart: 0,
-        elapsed: 0,
         particles: [],
         deathFlash: 0,
         nearMiss: 0,
@@ -945,7 +1140,6 @@
         G.nearMiss = 0;
         G.combo = { count: 0, timer: 0 };
         G.steerAxis = null;
-        G.elapsed = 0;
         G.levelStart = performance.now();
 
         const midY = Math.floor(ROWS / 2);
@@ -981,12 +1175,14 @@
         if (!free.length) return false;
 
         const f = free[Math.floor(Math.random() * free.length)];
-        f.spots = [];
-        const count = 4 + Math.floor(Math.random() * 3);
+        f.sparks = [];
+        const count = 3 + Math.floor(Math.random() * 3);
         for (let i = 0; i < count; i++) {
-          const a = Math.random() * TAU;
-          const r = Math.sqrt(Math.random()) * 0.66;
-          f.spots.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, r: 0.06 + Math.random() * 0.08 });
+          f.sparks.push({
+            a: Math.random() * TAU,
+            r: 0.62 + Math.random() * 0.5,
+            s: 0.6 + Math.random() * 1.2,
+          });
         }
         G.food = f;
         return true;
@@ -995,6 +1191,7 @@
       function updateHud() {
         el.level.textContent = String(G.level).padStart(2, '0');
         el.goal.textContent = G.eggs + '/' + G.target;
+        el.bar.style.width = Math.round((G.eggs / Math.max(1, G.target)) * 100) + '%';
         el.stars.textContent = totalStars();
         el.coins.textContent = RET.coins;
       }
@@ -1020,7 +1217,6 @@
       }
 
       function step() {
-        // 一步只消费一个方向，保持网格手感；渲染使用缓存的 pred，所以不会回跳
         if (G.queue.length) {
           const d = G.queue.shift();
           if (!(d.x === -G.dir.x && d.y === -G.dir.y)) G.dir = d;
@@ -1046,12 +1242,10 @@
 
         if (grow) {
           G.eggs += 1;
-          const gain = Math.max(1, Math.round(1 * streakMultiplier()));
-          RET.coins += gain;
+          RET.coins += Math.max(1, Math.round(streakMultiplier()));
           RET.eggs += 1;
           addMissionProgress('eggs', 1);
 
-          // 连吃：短时间连续吃到蛋给予额外奖励，强化正反馈
           G.combo.count += 1;
           G.combo.timer = 1.6;
           if (G.combo.count >= 3) RET.coins += 1;
@@ -1146,21 +1340,20 @@
         const px = (cx + 0.5) * cell;
         const py = (cy + 0.5) * cell;
         const skin = currentSkin();
-        for (let i = 0; i < 16; i++) {
+        for (let i = 0; i < 18; i++) {
           const angle = Math.random() * TAU;
-          const speed = cell * (0.8 + Math.random() * 2.6);
+          const speed = cell * (1 + Math.random() * 3.2);
           G.particles.push({
-            x: px + (Math.random() - 0.5) * cell * 0.24,
-            y: py + (Math.random() - 0.5) * cell * 0.24,
+            x: px + (Math.random() - 0.5) * cell * 0.22,
+            y: py + (Math.random() - 0.5) * cell * 0.22,
             vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed - cell * 0.25,
+            vy: Math.sin(angle) * speed - cell * 0.2,
             life: 1,
-            decay: 1.1 + Math.random() * 0.9,
-            size: cell * (0.03 + Math.random() * 0.05),
+            decay: 1.2 + Math.random() * 0.9,
+            size: cell * (0.025 + Math.random() * 0.05),
             rot: Math.random() * TAU,
             spin: (Math.random() - 0.5) * 10,
-            cream: Math.random() > 0.35,
-            gem: skin.gem,
+            color: Math.random() > 0.4 ? '#fff1b8' : skin.gem,
           });
         }
       }
@@ -1170,7 +1363,7 @@
           const p = G.particles[i];
           p.x += p.vx * dt;
           p.y += p.vy * dt;
-          p.vy += cell * 1.1 * dt;
+          p.vy += cell * 0.9 * dt;
           p.vx *= 0.96;
           p.vy *= 0.96;
           p.rot += p.spin * dt;
@@ -1266,37 +1459,52 @@
         const skin = currentSkin();
         const last = n - 1;
 
-        // 投影
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.24)';
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
+
+        // 地面投影
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)';
         for (let i = 1; i < n; i += 2) {
           const p = i / last;
           ctx.lineWidth = bodyRadius(p) * 2;
           ctx.beginPath();
-          ctx.moveTo(pts[i - 1].x + cell * 0.06, pts[i - 1].y + cell * 0.1);
-          ctx.lineTo(pts[i].x + cell * 0.06, pts[i].y + cell * 0.1);
+          ctx.moveTo(pts[i - 1].x + cell * 0.05, pts[i - 1].y + cell * 0.1);
+          ctx.lineTo(pts[i].x + cell * 0.05, pts[i].y + cell * 0.1);
           ctx.stroke();
         }
 
-        // 深色外轮廓
-        ctx.strokeStyle = 'rgba(34, 19, 9, 0.94)';
+        // 霓虹外发光
+        ctx.save();
+        ctx.globalAlpha = 0.24;
+        ctx.strokeStyle = skin.glow;
         for (let i = 1; i < n; i++) {
           const p = i / last;
-          ctx.lineWidth = bodyRadius(p) * 2 + 2.4;
+          ctx.lineWidth = bodyRadius(p) * 2 + 8;
+          ctx.beginPath();
+          ctx.moveTo(pts[i - 1].x, pts[i - 1].y);
+          ctx.lineTo(pts[i].x, pts[i].y);
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        // 深色描边
+        ctx.strokeStyle = 'rgba(6, 10, 24, 0.92)';
+        for (let i = 1; i < n; i++) {
+          const p = i / last;
+          ctx.lineWidth = bodyRadius(p) * 2 + 2.6;
           ctx.beginPath();
           ctx.moveTo(pts[i - 1].x, pts[i - 1].y);
           ctx.lineTo(pts[i].x, pts[i].y);
           ctx.stroke();
         }
 
-        // 皮肤与环纹
+        // 渐变皮肤
         let dist = 0;
         for (let i = 1; i < n; i++) {
           dist += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
           const p = i / last;
-          const band = Math.pow(0.5 + 0.5 * Math.sin((dist / (cell * 1.62)) * TAU), 2.2);
-          const c = mix(skin.lo, skin.hi, 1 - band * 0.78);
+          const band = Math.pow(0.5 + 0.5 * Math.sin((dist / (cell * 1.7)) * TAU), 2);
+          const c = mix(skin.lo, skin.hi, 1 - band * 0.72);
           ctx.strokeStyle = 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
           ctx.lineWidth = bodyRadius(p) * 2;
           ctx.beginPath();
@@ -1305,34 +1513,17 @@
           ctx.stroke();
         }
 
-        // 背脊高光
-        ctx.strokeStyle = 'rgba(255, 236, 196, 0.16)';
-        ctx.lineWidth = Math.max(1, cell * 0.045);
+        // 高光脊线
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.42)';
+        ctx.lineWidth = Math.max(1, cell * 0.05);
         ctx.beginPath();
         for (let i = 0; i < n; i++) {
           const x = pts[i].x - cell * 0.02;
-          const y = pts[i].y - cell * 0.045;
+          const y = pts[i].y - cell * 0.05;
           if (i === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
         ctx.stroke();
-
-        // 鳞片细纹
-        ctx.strokeStyle = 'rgba(44, 22, 10, 0.14)';
-        ctx.lineWidth = 0.9;
-        for (let i = 5; i < n - 4; i += 7) {
-          const p = i / last;
-          const r = bodyRadius(p);
-          const a = Math.atan2(pts[i + 1].y - pts[i - 1].y, pts[i + 1].x - pts[i - 1].x);
-          const nx = -Math.sin(a);
-          const ny = Math.cos(a);
-          for (const s of [-1, 1]) {
-            ctx.beginPath();
-            ctx.moveTo(pts[i].x + nx * s * r * 0.22, pts[i].y + ny * s * r * 0.22);
-            ctx.lineTo(pts[i].x + nx * s * r * 0.82, pts[i].y + ny * s * r * 0.82);
-            ctx.stroke();
-          }
-        }
       }
 
       function headPath(rx, ry) {
@@ -1364,13 +1555,23 @@
         ctx.translate(head.x, head.y);
         ctx.rotate(ang);
 
+        // 霓虹光罩
+        ctx.save();
+        ctx.globalAlpha = 0.5;
+        ctx.shadowColor = skin.glow;
+        ctx.shadowBlur = c * 0.75;
+        ctx.fillStyle = skin.glow;
+        headPath(c * 0.6, c * 0.42);
+        ctx.fill();
+        ctx.restore();
+
         // 吐信
         const flick = Math.sin(t / 620);
-        if (flick > 0.25 && G.status === 'running') {
-          const ext = (flick - 0.25) / 0.75;
-          const len = c * (0.16 + 0.44 * ext);
-          ctx.strokeStyle = 'rgba(198, 70, 86, 0.9)';
-          ctx.lineWidth = Math.max(1, c * 0.028);
+        if (flick > 0.3 && G.status === 'running') {
+          const ext = (flick - 0.3) / 0.7;
+          const len = c * (0.16 + 0.42 * ext);
+          ctx.strokeStyle = 'rgba(255, 110, 170, 0.92)';
+          ctx.lineWidth = Math.max(1, c * 0.03);
           ctx.lineCap = 'round';
           ctx.beginPath();
           ctx.moveTo(c * 0.5, 0);
@@ -1385,15 +1586,12 @@
         const rx = c * 0.6;
         const ry = c * 0.42;
 
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
-        ctx.beginPath();
-        ctx.ellipse(c * 0.05, c * 0.09, c * 0.58, c * 0.39, 0, 0, TAU);
+        // 描边
+        ctx.fillStyle = 'rgba(6, 10, 24, 0.95)';
+        headPath(rx + 1.8, ry + 1.8);
         ctx.fill();
 
-        ctx.fillStyle = 'rgba(32, 18, 9, 0.95)';
-        headPath(rx + 1.5, ry + 1.5);
-        ctx.fill();
-
+        // 头部渐变
         const g = ctx.createLinearGradient(0, -ry, 0, ry);
         g.addColorStop(0, skin.head[0]);
         g.addColorStop(0.55, skin.head[1]);
@@ -1402,46 +1600,50 @@
         headPath(rx, ry);
         ctx.fill();
 
-        ctx.fillStyle = 'rgba(70, 40, 18, 0.42)';
-        ctx.beginPath();
-        ctx.ellipse(c * 0.02, 0, c * 0.3, c * 0.15, 0, 0, TAU);
-        ctx.fill();
-        for (const s of [-1, 1]) {
-          ctx.beginPath();
-          ctx.ellipse(c * 0.32, s * c * 0.15, c * 0.16, c * 0.042, s * 0.32, 0, TAU);
-          ctx.fill();
-        }
+        // 边缘亮线
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+        ctx.lineWidth = 1.1;
+        headPath(rx, ry);
+        ctx.stroke();
 
-        const eyeR = Math.max(2.4, c * 0.105);
+        // 顶部光泽
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+        ctx.beginPath();
+        ctx.ellipse(c * 0.06, -c * 0.19, c * 0.3, c * 0.1, -0.16, 0, TAU);
+        ctx.fill();
+
+        // 眼睛：白眼球 + 彩色虹膜 + 竖瞳
+        const eyeR = Math.max(2.6, c * 0.115);
         for (const s of [-1, 1]) {
           const ex = c * 0.1;
-          const ey = s * c * 0.28;
+          const ey = s * c * 0.27;
 
-          ctx.fillStyle = 'rgba(26, 14, 6, 0.92)';
+          ctx.fillStyle = '#ffffff';
           ctx.beginPath();
-          ctx.ellipse(ex, ey, eyeR * 1.32, eyeR * 1.22, 0, 0, TAU);
+          ctx.ellipse(ex, ey, eyeR * 1.06, eyeR, 0, 0, TAU);
           ctx.fill();
 
-          const ig = ctx.createRadialGradient(ex - eyeR * 0.25, ey - eyeR * 0.25, eyeR * 0.15, ex, ey, eyeR);
+          const ig = ctx.createRadialGradient(ex - eyeR * 0.2, ey - eyeR * 0.2, eyeR * 0.15, ex, ey, eyeR * 0.82);
           ig.addColorStop(0, skin.eye);
-          ig.addColorStop(1, '#a2682a');
+          ig.addColorStop(1, skin.head[1]);
           ctx.fillStyle = ig;
           ctx.beginPath();
-          ctx.arc(ex, ey, eyeR, 0, TAU);
+          ctx.arc(ex, ey, eyeR * 0.8, 0, TAU);
           ctx.fill();
 
-          ctx.fillStyle = '#0d0803';
+          ctx.fillStyle = '#08101f';
           ctx.beginPath();
-          ctx.ellipse(ex, ey, eyeR * 0.24, eyeR * 0.76, 0, 0, TAU);
+          ctx.ellipse(ex, ey, eyeR * 0.24, eyeR * 0.66, 0, 0, TAU);
           ctx.fill();
 
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
           ctx.beginPath();
-          ctx.arc(ex - eyeR * 0.32, ey - eyeR * 0.34, eyeR * 0.19, 0, TAU);
+          ctx.arc(ex - eyeR * 0.3, ey - eyeR * 0.34, eyeR * 0.22, 0, TAU);
           ctx.fill();
         }
 
-        ctx.fillStyle = 'rgba(26, 14, 6, 0.85)';
+        // 鼻孔
+        ctx.fillStyle = 'rgba(8, 14, 28, 0.8)';
         for (const s of [-1, 1]) {
           ctx.beginPath();
           ctx.ellipse(c * 0.48, s * c * 0.055, c * 0.024, c * 0.016, 0, 0, TAU);
@@ -1451,71 +1653,52 @@
         ctx.restore();
       }
 
-      /* ---------------- 绘制：蛇蛋 / 粒子 ---------------- */
+      /* ---------------- 绘制：能量球 ---------------- */
 
       function drawFood(t) {
         const c = cell;
         const cx = (G.food.x + 0.5) * c;
-        const bob = Math.sin(t / 520) * c * 0.015;
-        const rx = c * 0.24;
-        const ry = c * 0.3;
-        const cy = (G.food.y + 0.5) * c + bob - c * 0.02;
+        const cy = (G.food.y + 0.5) * c;
+        const pulse = 0.5 + 0.5 * Math.sin(t / 300);
+        const r = c * (0.2 + 0.03 * pulse);
 
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-        ctx.beginPath();
-        ctx.ellipse(cx + c * 0.05, cy + ry * 0.94, c * 0.26, c * 0.1, 0, 0, TAU);
-        ctx.fill();
-
-        const halo = ctx.createRadialGradient(cx, cy, rx * 0.5, cx, cy, rx * 2.6);
-        halo.addColorStop(0, 'rgba(255, 240, 196, 0.14)');
-        halo.addColorStop(1, 'rgba(255, 240, 196, 0)');
+        // 光晕
+        const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, c * 0.9);
+        halo.addColorStop(0, 'rgba(255, 224, 140, 0.5)');
+        halo.addColorStop(0.45, 'rgba(255, 196, 80, 0.16)');
+        halo.addColorStop(1, 'rgba(255, 196, 80, 0)');
         ctx.fillStyle = halo;
         ctx.beginPath();
-        ctx.arc(cx, cy, rx * 2.6, 0, TAU);
+        ctx.arc(cx, cy, c * 0.9, 0, TAU);
         ctx.fill();
 
-        ctx.strokeStyle = 'rgba(136, 158, 92, 0.62)';
+        // 脉冲环
+        ctx.strokeStyle = 'rgba(255, 226, 150, ' + (0.42 - pulse * 0.26) + ')';
         ctx.lineWidth = Math.max(1, c * 0.035);
-        for (let i = 0; i < 8; i++) {
-          const a = (i / 8) * TAU + 0.35;
-          const x1 = cx + Math.cos(a) * rx * 1.34;
-          const y1 = cy + Math.sin(a) * ry * 1.14;
-          ctx.beginPath();
-          ctx.moveTo(x1, y1);
-          ctx.quadraticCurveTo(
-            x1 + Math.cos(a) * c * 0.11,
-            y1 + Math.sin(a) * c * 0.11 - c * 0.05,
-            x1 + Math.cos(a) * c * 0.18,
-            y1 + Math.sin(a) * c * 0.15 - c * 0.09
-          );
-          ctx.stroke();
-        }
-
-        ctx.fillStyle = 'rgba(52, 42, 26, 0.55)';
         ctx.beginPath();
-        ctx.ellipse(cx, cy, rx + 1.6, ry + 1.6, 0, 0, TAU);
-        ctx.fill();
+        ctx.arc(cx, cy, c * (0.36 + pulse * 0.16), 0, TAU);
+        ctx.stroke();
 
-        const g = ctx.createRadialGradient(cx - rx * 0.4, cy - ry * 0.45, rx * 0.18, cx, cy, ry * 1.08);
-        g.addColorStop(0, '#fffdf4');
-        g.addColorStop(0.6, '#efe1c4');
-        g.addColorStop(1, '#c3ae85');
+        // 核心
+        const g = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.35, r * 0.1, cx, cy, r);
+        g.addColorStop(0, '#ffffff');
+        g.addColorStop(0.42, '#ffe89a');
+        g.addColorStop(1, '#f5a623');
         ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.ellipse(cx, cy, rx, ry, 0, 0, TAU);
+        ctx.arc(cx, cy, r, 0, TAU);
         ctx.fill();
 
-        ctx.fillStyle = 'rgba(116, 90, 56, 0.5)';
-        for (const s of G.food.spots) {
+        // 环绕光点
+        for (const s of G.food.sparks) {
+          const a = t / 900 + s.a;
+          const sx = cx + Math.cos(a) * c * s.r * 0.5;
+          const sy = cy + Math.sin(a) * c * s.r * 0.42;
+          ctx.fillStyle = 'rgba(255, 246, 200, ' + (0.35 + 0.35 * Math.sin(a * 2)) + ')';
           ctx.beginPath();
-          ctx.ellipse(cx + s.x * rx, cy + s.y * ry, s.r * rx, s.r * ry * 0.8, 0, 0, TAU);
+          ctx.arc(sx, sy, c * 0.028 * s.s, 0, TAU);
           ctx.fill();
         }
-
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
-        ctx.beginPath();
-        ctx.ellipse(cx - rx * 0.35, cy - ry * 0.5, rx * 0.24, ry * 0.12, -0.5, 0, TAU);
-        ctx.fill();
       }
 
       function drawParticles() {
@@ -1525,7 +1708,7 @@
           ctx.globalAlpha = Math.min(1, p.life * 1.4);
           ctx.translate(p.x, p.y);
           ctx.rotate(p.rot);
-          ctx.fillStyle = p.cream ? '#f3e9d2' : p.gem;
+          ctx.fillStyle = p.color;
           ctx.beginPath();
           ctx.moveTo(-p.size, -p.size * 0.6);
           ctx.lineTo(p.size, 0);
@@ -1554,14 +1737,14 @@
         if (G.nearMiss > 0) {
           const a = G.nearMiss;
           const grd = ctx.createRadialGradient(size / 2, size / 2, size * 0.34, size / 2, size / 2, size * 0.72);
-          grd.addColorStop(0, 'rgba(255, 214, 140, 0)');
-          grd.addColorStop(1, 'rgba(255, 214, 140, ' + (0.22 * a) + ')');
+          grd.addColorStop(0, 'rgba(120, 240, 255, 0)');
+          grd.addColorStop(1, 'rgba(120, 240, 255, ' + (0.2 * a) + ')');
           ctx.fillStyle = grd;
           ctx.fillRect(0, 0, size, size);
         }
 
         if (G.deathFlash > 0) {
-          ctx.fillStyle = 'rgba(120, 20, 26, ' + G.deathFlash * 0.3 + ')';
+          ctx.fillStyle = 'rgba(120, 20, 60, ' + G.deathFlash * 0.34 + ')';
           ctx.fillRect(0, 0, size, size);
         }
       }
@@ -1599,15 +1782,15 @@
         const lv = clamp(RET.unlocked, 1, LEVELS.length);
         const cfg = LEVELS[lv - 1];
         setOverlay(
-          '<span class="kicker">snake in the grass</span>' +
-          '<h1>林间蛇影</h1>' +
-          '<p>按住画面并移动鼠标控制方向，松开暂停。<br>吃掉蛇蛋达成目标即可过关。</p>' +
-          '<div class="ov-stats">' +
-            '<div class="ov-stat"><span class="k">连续天数</span><span class="v">' + RET.streak + '</span></div>' +
-            '<div class="ov-stat"><span class="k">总星数</span><span class="v">' + totalStars() + '/' + (LEVELS.length * 3) + '</span></div>' +
-            '<div class="ov-stat"><span class="k">金币</span><span class="v">' + RET.coins + '</span></div>' +
+          '<span class="kicker">neon arcade</span>' +
+          '<h1>霓虹贪吃蛇</h1>' +
+          '<p>按住画面拖动控制方向，松开暂停。<br>吃掉能量球达成目标即可过关。</p>' +
+          '<div class="chips">' +
+            '<div class="chip"><span class="ck">连续天数</span><span class="cv">' + RET.streak + '</span></div>' +
+            '<div class="chip"><span class="ck">总星数</span><span class="cv">' + totalStars() + '</span></div>' +
+            '<div class="chip"><span class="ck">金币</span><span class="cv">' + RET.coins + '</span></div>' +
           '</div>' +
-          '<div class="panel"><h2>今日目标 · 连续 ' + RET.streak + ' 天，金币 ×' + streakMultiplier().toFixed(1) + '</h2>' + missionsMarkup() + '</div>' +
+          '<div class="panel"><h2>今日任务 · 连续 ' + RET.streak + ' 天 · 金币 ×' + streakMultiplier().toFixed(1) + '</h2>' + missionsMarkup() + '</div>' +
           '<button class="btn-primary" data-action="play" data-level="' + lv + '">开始第 ' + lv + ' 关 · 目标 ' + cfg.target + '</button>' +
           '<div class="btn-row"><button class="btn-ghost" data-action="select">选关与皮肤</button></div>'
         );
@@ -1620,7 +1803,7 @@
           const st = RET.stars[n] || 0;
           return '<button class="lv ' + (st ? 'done' : '') + '" data-action="play" data-level="' + n + '"' +
             (locked ? ' disabled' : '') + '>' +
-            (locked ? '锁' : String(n).padStart(2, '0')) +
+            (locked ? '🔒' : String(n).padStart(2, '0')) +
             '<span class="st">' + (locked ? '' : '★'.repeat(st) + '☆'.repeat(3 - st)) + '</span>' +
             '</button>';
         }).join('');
@@ -1630,6 +1813,7 @@
           const active = RET.skin === s.id;
           return '<button class="skin ' + (active ? 'active' : '') + '" data-action="skin" data-skin="' + s.id + '"' +
             (!owned && RET.coins < s.cost ? ' disabled' : '') + '>' +
+            '<i class="sw" style="background:' + s.swatch + ';color:' + s.gem + '"></i>' +
             s.name +
             '<span class="price">' + (active ? '使用中' : owned ? '点击使用' : s.cost + ' 金币') + '</span>' +
             '</button>';
@@ -1638,9 +1822,9 @@
         setOverlay(
           '<span class="kicker">level select</span>' +
           '<h1>选择关卡</h1>' +
-          '<p>已解锁 ' + RET.unlocked + ' / ' + LEVELS.length + ' 关 · 共 ' + totalStars() + ' 颗星</p>' +
+          '<p>已解锁 ' + RET.unlocked + ' / ' + LEVELS.length + ' 关 · 共 ' + totalStars() + ' / ' + (LEVELS.length * 3) + ' 颗星</p>' +
           '<div class="level-grid">' + cells + '</div>' +
-          '<div class="panel"><h2>皮肤</h2><div class="shop">' + skins + '</div></div>' +
+          '<div class="panel"><h2>蛇皮商店</h2><div class="shop">' + skins + '</div></div>' +
           '<div class="btn-row"><button class="btn-ghost" data-action="back">返回</button></div>'
         );
       }
@@ -1652,12 +1836,12 @@
           '<span class="kicker">level clear</span>' +
           '<h1>' + (last ? '全部通关' : '第 ' + G.level + ' 关完成') + '</h1>' +
           '<div class="big-stars">' + starsMarkup(stars, 3) + '</div>' +
-          '<div class="ov-stats">' +
-            '<div class="ov-stat"><span class="k">用时</span><span class="v">' + seconds.toFixed(1) + 's</span></div>' +
-            '<div class="ov-stat"><span class="k">获得</span><span class="v">+' + bonus + '</span></div>' +
-            '<div class="ov-stat"><span class="k">连续</span><span class="v">' + RET.streak + '天</span></div>' +
+          '<div class="chips">' +
+            '<div class="chip"><span class="ck">用时</span><span class="cv">' + seconds.toFixed(1) + 's</span></div>' +
+            '<div class="chip"><span class="ck">金币</span><span class="cv">+' + bonus + '</span></div>' +
+            '<div class="chip"><span class="ck">连续</span><span class="cv">' + RET.streak + '天</span></div>' +
           '</div>' +
-          '<div class="panel"><h2>今日目标</h2>' + missionsMarkup() + '</div>' +
+          '<div class="panel"><h2>今日任务</h2>' + missionsMarkup() + '</div>' +
           (last
             ? '<button class="btn-primary" data-action="select">查看全部关卡</button>'
             : '<button class="btn-primary" data-action="play" data-level="' + nextLv + '">下一关 · ' + nextLv + '</button>') +
@@ -1673,10 +1857,10 @@
           '<span class="kicker">run ended</span>' +
           '<h1>蛇影消散</h1>' +
           '<p>本关目标 ' + G.eggs + '/' + G.target + '，再试一次就能过。</p>' +
-          '<div class="ov-stats">' +
-            '<div class="ov-stat"><span class="k">关卡</span><span class="v">' + G.level + '</span></div>' +
-            '<div class="ov-stat"><span class="k">吃到</span><span class="v">' + G.eggs + '</span></div>' +
-            '<div class="ov-stat"><span class="k">金币</span><span class="v">' + RET.coins + '</span></div>' +
+          '<div class="chips">' +
+            '<div class="chip"><span class="ck">关卡</span><span class="cv">' + G.level + '</span></div>' +
+            '<div class="chip"><span class="ck">吃到</span><span class="cv">' + G.eggs + '</span></div>' +
+            '<div class="chip"><span class="ck">金币</span><span class="cv">' + RET.coins + '</span></div>' +
           '</div>' +
           '<button class="btn-primary" data-action="play" data-level="' + G.level + '">再试一次</button>' +
           '<div class="btn-row"><button class="btn-ghost" data-action="select">选关</button></div>'
@@ -1726,8 +1910,6 @@
         if (dx === base.x && dy === base.y) return;
         if (dx === -base.x && dy === -base.y) return;
         if (G.queue.length >= 2) return;
-
-        // 只入队，不强行结算：避免插值进度瞬间跳到 1 造成视觉前冲
         G.queue.push({ x: dx, y: dy });
       }
 
@@ -1745,7 +1927,6 @@
         const ax = Math.abs(vx);
         const ay = Math.abs(vy);
 
-        // 滞回：切换主轴需要超出 15%，避免 45° 附近抖动
         let axis = G.steerAxis;
         if (axis === 'x' && ay > ax * 1.15) axis = 'y';
         else if (axis === 'y' && ax > ay * 1.15) axis = 'x';
@@ -1831,7 +2012,7 @@
       el.soundBtn.addEventListener('click', () => {
         soundOn = !soundOn;
         el.soundBtn.textContent = soundOn ? '音效 开' : '音效 关';
-        if (soundOn) tone(560, 0.08, 'triangle', 0.08);
+        if (soundOn) tone(620, 0.08, 'triangle', 0.08);
       });
 
       let toastTimer = 0;
@@ -1855,7 +2036,6 @@
           G.acc += dt * 1000;
           if (G.acc >= G.stepMs) {
             G.acc -= G.stepMs;
-            // 一帧最多推进一步，杜绝卡顿后的瞬移
             if (G.acc >= G.stepMs) G.acc = G.stepMs * 0.98;
             step();
             if (G.status !== 'running') G.acc = 0;
